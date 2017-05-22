@@ -40,17 +40,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileHelper\Converters\TimeSpanConverter.cs" />
+    <Compile Include="FileHelper\Converters\Vector3DConverter.cs" />
     <Compile Include="FileHelper\EngineBase.cs" />
     <Compile Include="FileHelper\EventEngineBase.cs" />
     <Compile Include="FileHelper\NewLineDelimitedRecordReader.cs" />
     <Compile Include="FileHelper\StringHelper.cs" />
+    <Compile Include="FileHelper\TextWriterLines.cs" />
     <Compile Include="FileHelper\VisynFileHelper.cs" />
+    <Compile Include="FileHelper\VisynFileHelperEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Customers\Lucent\FileHelpers\FileHelpers\FileHelpers.csproj">
       <Project>{eb8633ff-ceed-40ee-8d1a-ca1bf5678c42}</Project>
       <Name>FileHelpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Visyn.Core\Visyn.Core.csproj">
+      <Project>{9c2a8976-44c2-47e1-a56a-d21c8794def0}</Project>
+      <Name>Visyn.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Visyn.Public\Visyn.Public.csproj">
+      <Project>{aba4963b-56ba-4b42-8c2a-17be811e5f8e}</Project>
+      <Name>Visyn.Public</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -384,7 +384,7 @@ namespace Visyn.Windows.Io.FileHelper
                         case ErrorMode.SaveAndContinue:
                             var err = new ErrorInfo
                             {
-                                LineNumber = this.LineNumber,
+                                LineNumber = LineNumber,
                                 ExceptionInfo = ex,
                                 RecordString = currentLine
                             };
@@ -448,5 +448,94 @@ namespace Visyn.Windows.Io.FileHelper
 
 
         #endregion
+
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        public void WriteStreamMulti(TextWriter writer, IEnumerable<T> records, int maxRecords)
+        {
+            if (writer == null) throw new ArgumentNullException(nameof(writer), "The writer of the Stream can be null");
+
+            if (records == null) throw new ArgumentNullException(nameof(records), "The records can be null. Try with an empty array.");
+
+            ResetFields();
+
+            writer.NewLine = NewLineForWrite;
+
+            if (!string.IsNullOrEmpty(HeaderText))
+            {
+                if (HeaderText.EndsWith(NewLineForWrite)) writer.Write(HeaderText);
+                else writer.WriteLine(HeaderText);
+            }
+
+            var max = records is IList ? Math.Min(((IList)records).Count, maxRecords) : maxRecords;
+
+            if (MustNotifyProgress) // Avoid object creation
+                OnProgress(new ProgressEventArgs(0, max));
+
+            var recIndex = 0;
+
+            var first = true;
+            string currentLine = null;
+            foreach (var rec in records)
+            {
+                if (recIndex == maxRecords) break;
+
+                LineNumber++;
+                try
+                {
+                    if (rec == null) throw new BadUsageException($"The record at index {recIndex} is null.");
+
+                    if (first)
+                    {
+                        first = false;
+                        if (RecordInfo.RecordType.IsInstanceOfType(rec) == false)
+                        {
+                            throw new BadUsageException($"This engine works with record of type {RecordInfo.RecordType.Name} and you use records of type {rec.GetType().Name}");
+                        }
+                    }
+
+                    var skip = false;
+
+                    if (MustNotifyProgress) // Avoid object creation
+                        OnProgress(new ProgressEventArgs(recIndex + 1, max));
+
+                    if (MustNotifyWrite)
+                        skip = OnBeforeWriteRecord(rec, LineNumber);
+
+                    if (skip == false)
+                    {
+                        currentLine = RecordInfo.Operations.RecordToString(rec);
+                        if (MustNotifyWrite)
+                            currentLine = OnAfterWriteRecord(currentLine, rec);
+                        writer.WriteLine(currentLine);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    switch (ErrorManager.ErrorMode)
+                    {
+                        case ErrorMode.ThrowException: throw;
+                        case ErrorMode.IgnoreAndContinue: break;
+                        case ErrorMode.SaveAndContinue:
+                            var err = new ErrorInfo
+                            {
+                                LineNumber = LineNumber,
+                                ExceptionInfo = ex,
+                                RecordString = currentLine
+                            };
+                            ErrorManager.AddError(err);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+                recIndex++;
+            }
+
+            TotalRecords = recIndex;
+
+            if (string.IsNullOrEmpty(FooterText)) return;
+            if (FooterText.EndsWith(NewLineForWrite)) writer.Write(FooterText);
+            else writer.WriteLine(FooterText);
+        }
     }
 }
