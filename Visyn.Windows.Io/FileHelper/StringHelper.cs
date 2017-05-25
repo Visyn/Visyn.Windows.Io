@@ -2,7 +2,8 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using FileHelpers;
+using Visyn.Windows.Io.Exceptions;
+using Visyn.Windows.Io.FileHelper.Core;
 
 namespace Visyn.Windows.Io.FileHelper
 {
@@ -172,7 +173,19 @@ namespace Visyn.Windows.Io.FileHelper
 
             return mCulture.CompareInfo;
         }
+        /// <summary>
+        /// Replace string with another ignoring the case of the string
+        /// </summary>
+        /// <param name="original">Original string</param>
+        /// <param name="oldValue">string to replace</param>
+        /// <param name="newValue">string to insert</param>
+        /// <returns>string with values replaced</returns>
+        public static string ReplaceIgnoringCase(string original, string oldValue, string newValue)
+        {
+            return Replace(original, oldValue, newValue, StringComparison.OrdinalIgnoreCase);
+        }
 
+   
         /// <summary>
         /// replace the one string with another, and keep doing it
         /// </summary>
@@ -272,7 +285,7 @@ namespace Visyn.Windows.Io.FileHelper
         /// <param name="value">The string to compare.</param>
         /// <param name="comparisonType">string comparison type.</param>
         /// <returns></returns>
-        public static bool StartsWithIgnoringWhiteSpaces (string source, string value, System.StringComparison comparisonType)
+        public static bool StartsWithIgnoringWhiteSpaces (string source, string value, StringComparison comparisonType)
         {
             if (value == null) return false;
 

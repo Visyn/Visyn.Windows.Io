@@ -6,8 +6,11 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using FileHelpers;
-using FileHelpers.Events;
+using Visyn.Windows.Io.Exceptions;
+using Visyn.Windows.Io.FileHelper.Enums;
+using Visyn.Windows.Io.FileHelper.Core;
+using Visyn.Windows.Io.FileHelper.Events;
+using Visyn.Windows.Io.FileHelper.Streams;
 
 namespace Visyn.Windows.Io.FileHelper
 {
@@ -179,7 +182,7 @@ namespace Visyn.Windows.Io.FileHelper
                                     streamInfo.TotalBytes));
                             }
 
-                            BeforeReadEventArgs<T> e = null;
+                            Events.BeforeReadEventArgs<T> e = null;
                             if (MustNotifyRead)
                             {
                                 e = new BeforeReadEventArgs<T>(this, record, currentLine, LineNumber);

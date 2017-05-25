@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
-using FileHelpers;
-using FileHelpers.Events;
+using Visyn.Windows.Io.FileHelper.Core;
+using Visyn.Windows.Io.FileHelper.Interfaces;
+
 
 namespace Visyn.Windows.Io.FileHelper
 {
@@ -33,31 +34,31 @@ namespace Visyn.Windows.Io.FileHelper
         /// Event based upon supplied record information
         /// </summary>
         /// <param name="ri"></param>
-        internal EventEngineBase(RecordInfo ri) : base(ri) {}
+        internal EventEngineBase(VisynRecordInfo ri) : base(ri) {}
 
         /// <summary>
         /// Called in read operations just before the record string is
         /// translated to a record.
         /// </summary>
-        public event BeforeReadHandler<T> BeforeReadRecord;
+        public event Events.BeforeReadHandler<T> BeforeReadRecord;
 
         /// <summary>
         /// Called in read operations just after the record was created from a
         /// record string.
         /// </summary>
-        public event AfterReadHandler<T> AfterReadRecord;
+        public event Events.AfterReadHandler<T> AfterReadRecord;
 
         /// <summary>
         /// Called in write operations just before the record is converted to a
         /// string to write it.
         /// </summary>
-        public event BeforeWriteHandler<T> BeforeWriteRecord;
+        public event Events.BeforeWriteHandler<T> BeforeWriteRecord;
 
         /// <summary>
         /// Called in write operations just after the record was converted to a
         /// string.
         /// </summary>
-        public event AfterWriteHandler<T> AfterWriteRecord;
+        public event Events.AfterWriteHandler<T> AfterWriteRecord;
 
         /// <summary>
         /// Check whether we need to notify the read to anyone
@@ -79,7 +80,7 @@ namespace Visyn.Windows.Io.FileHelper
         /// </summary>
         /// <param name="e">Record details before read</param>
         /// <returns>True if record to be skipped</returns>
-        protected bool OnBeforeReadRecord(BeforeReadEventArgs<T> e)
+        protected bool OnBeforeReadRecord(Events.BeforeReadEventArgs<T> e)
         {
             if (RecordInfo.NotifyRead) ((INotifyRead)e.Record).BeforeRead(e);
 
@@ -98,7 +99,7 @@ namespace Visyn.Windows.Io.FileHelper
         /// <returns>true if record to be skipped</returns>
         protected bool OnAfterReadRecord(string line, T record, bool lineChanged, int lineNumber)
         {
-            var e = new AfterReadEventArgs<T>(this, line, lineChanged, record, lineNumber);
+            var e = new Events.AfterReadEventArgs<T>(this, line, lineChanged, record, lineNumber);
 
             if (RecordInfo.NotifyRead) ((INotifyRead) record).AfterRead(e);
 
@@ -116,7 +117,7 @@ namespace Visyn.Windows.Io.FileHelper
         /// <returns>true if record is to be dropped</returns>
         protected bool OnBeforeWriteRecord(T record, int lineNumber)
         {
-            var e = new BeforeWriteEventArgs<T>(this, record, lineNumber);
+            var e = new Events.BeforeWriteEventArgs<T>(this, record, lineNumber);
 
             if (RecordInfo.NotifyWrite) ((INotifyWrite) record).BeforeWrite(e);
 
@@ -133,7 +134,7 @@ namespace Visyn.Windows.Io.FileHelper
         /// <returns>Record to be written</returns>
         protected string OnAfterWriteRecord(string line, T record)
         {
-            var e = new AfterWriteEventArgs<T>(this, record, LineNumber, line);
+            var e = new Events.AfterWriteEventArgs<T>(this, record, LineNumber, line);
 
             if (RecordInfo.NotifyWrite)
                 ((INotifyWrite) record).AfterWrite(e);

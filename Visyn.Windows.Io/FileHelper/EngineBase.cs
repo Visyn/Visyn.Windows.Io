@@ -2,9 +2,11 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
-using FileHelpers;
-using FileHelpers.Events;
-using FileHelpers.Options;
+using Visyn.Windows.Io.Exceptions;
+using Visyn.Windows.Io.FileHelper.Enums;
+using Visyn.Windows.Io.FileHelper.Core;
+using Visyn.Windows.Io.FileHelper.Options;
+using Visyn.Windows.Io.FileHelper.Events;
 
 //using Container=FileHelpers.Container;
 
@@ -12,7 +14,7 @@ namespace Visyn.Windows.Io.FileHelper
 {
     /// <summary>Abstract Base class for the engines of the library: 
     /// <see cref="FileHelperEngine"/> and 
-    /// <see cref="FileHelperAsyncEngine"/></summary>
+    /// <see cref="FileHelpers.FileHelperAsyncEngine{T}"/></summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public abstract class EngineBase
     {
@@ -41,16 +43,16 @@ namespace Visyn.Windows.Io.FileHelper
         protected EngineBase(Type recordType, Encoding encoding)
         {
             if (recordType == null)
-                throw new BadUsageException(Messages.Errors.NullRecordClass.Text);
+                throw new BadUsageException(Messages.Messages.Errors.NullRecordClass.Text);
 
             if (recordType.IsValueType) {
-                throw new BadUsageException(Messages.Errors.StructRecordClass
+                throw new BadUsageException(Messages.Messages.Errors.StructRecordClass
                     .RecordType(recordType.Name)
                     .Text);
             }
 
             mRecordType = recordType;
-            RecordInfo = FileHelpers.RecordInfo.Resolve(recordType); // Container.Resolve<IRecordInfo>(recordType);
+            RecordInfo = VisynRecordInfo.Resolve(recordType); // Container.Resolve<IRecordInfo>(recordType);
             Encoding = encoding;
 
             CreateRecordOptions();
@@ -198,13 +200,13 @@ namespace Visyn.Windows.Io.FileHelper
         ///   You can find complete information about the errors encountered while processing.
         ///   For example, you can get the errors, their number and save them to a file, etc.
         ///   </remarks>
-        ///   <seealso cref="FileHelpers.ErrorManager"/>
+        ///   <seealso cref="Exceptions.ErrorManager"/>
         public ErrorManager ErrorManager => _errorManager;
 
 
         /// <summary>
         /// Indicates the behavior of the engine when it finds an error.
-        /// {Shortcut for <seealso cref="FileHelpers.ErrorManager.ErrorMode"/>)
+        /// {Shortcut for <seealso cref="Exceptions.ErrorManager.ErrorMode"/>)
         /// </summary>
         public ErrorMode ErrorMode
         {

@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using FileHelpers;
 
 namespace Visyn.Windows.Io.FileHelper.Converters
 {
@@ -9,8 +8,7 @@ namespace Visyn.Windows.Io.FileHelper.Converters
         public override object StringToField(string from)
         {
             double milliseconds;
-            if (double.TryParse(from, out milliseconds)) return TimeSpan.FromMilliseconds(milliseconds);
-            return new TimeSpan(0,0,11,222);
+            return double.TryParse(@from, out milliseconds) ? TimeSpan.FromMilliseconds(milliseconds) : new TimeSpan(0,0,11,222);
         }
 
         public override string FieldToString(object fieldValue)
