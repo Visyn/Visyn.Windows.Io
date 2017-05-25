@@ -225,7 +225,7 @@ namespace Visyn.Windows.Io.FileHelper
                                     {
                                         LineNumber = freader.LineNumber,
                                         ExceptionInfo = ex,
-                                        RecordString = completeLine
+                                        Text = completeLine
                                     };
 
                                     ErrorManager.AddError(err);
@@ -389,7 +389,7 @@ namespace Visyn.Windows.Io.FileHelper
                             {
                                 LineNumber = LineNumber,
                                 ExceptionInfo = ex,
-                                RecordString = currentLine
+                                Text = currentLine
                             };
                             //							err.mColumnNumber = mColumnNum;
                             ErrorManager.AddError(err);
@@ -523,7 +523,7 @@ namespace Visyn.Windows.Io.FileHelper
                             {
                                 LineNumber = LineNumber,
                                 ExceptionInfo = ex,
-                                RecordString = currentLine
+                                Text = currentLine
                             };
                             ErrorManager.AddError(err);
                             break;

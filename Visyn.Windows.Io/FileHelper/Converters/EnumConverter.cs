@@ -5,23 +5,22 @@ namespace Visyn.Windows.Io.FileHelper.Converters
 {
     internal sealed class EnumConverter : ConverterBase
     {
-        private readonly Type mEnumType;
 
-        public EnumConverter(Type sourceEnum)
+        public EnumConverter(Type sourceEnum) : base(sourceEnum)
         {
             if (sourceEnum.IsEnum == false)
-                throw new BadUsageException("The Input sourceType must be an Enum but is of type " + sourceEnum.Name);
-
-            mEnumType = sourceEnum;
+                throw new BadUsageException($"The Input source Type must be an Enum but is of type {sourceEnum.Name}");
         }
 
-        public override object StringToField(string from)
+        public override object StringToField(string text)
         {
-            try {
-                return Enum.Parse(mEnumType, from.Trim(), true);
+            try
+            {
+                return Enum.Parse(Type, text.Trim(), true);
             }
-            catch (ArgumentException) {
-                throw new ConvertException(from, mEnumType, $"The value {from} is not present in the Enum.");
+            catch (ArgumentException)
+            {
+                throw new ConvertException(text, Type, $"The value {text} is not present in the Enum.");
             }
         }
     }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Visyn.Public.Exceptions;
 using Visyn.Windows.Io.Exceptions;
 using Visyn.Windows.Io.FileHelper.Attributes;
 using Visyn.Windows.Io.FileHelper.Converters;
@@ -33,7 +34,7 @@ namespace Visyn.Windows.Io.FileHelper.Fields
         /// <summary>
         /// Provider to convert to and from text
         /// </summary>
-        public ConverterBase Converter { get; private set; }
+        public IFieldConverter Converter { get; private set; }
 
         /// <summary>
         /// Number of extra characters used,  delimiters and quote characters
@@ -437,10 +438,18 @@ namespace Visyn.Windows.Io.FileHelper.Fields
                 conv.ValidateTypes(FieldInfo);
             }
             else
-                Converter = ConvertHelpers.GetDefaultConverter(FieldFriendlyName ?? fi.Name, FieldType);
+                Converter = ConverterFactory.GetDefaultConverter(FieldFriendlyName ?? fi.Name, FieldType);
 
             if (Converter != null)
-                Converter.mDestinationType = FieldTypeInternal;
+            {
+                if(Converter.Type == null)
+                    throw new ArgumentNullException(nameof(IFieldConverter.Type),
+                        $"Converter type [{Converter.GetType().Name}] can not be null!");
+                if(Converter.Type != FieldTypeInternal)
+                    throw new TypeMismatchException(Converter.Type,
+                        $"{Converter.GetType().Name} destination type {Converter.Type} != expected type {FieldTypeInternal}");
+                //Converter.mDestinationType = FieldTypeInternal;
+            }
 
             attribs = attibuteTarget.GetCustomAttributes(typeof (FieldNullValueAttribute), true);
 
@@ -449,11 +458,10 @@ namespace Visyn.Windows.Io.FileHelper.Fields
                 //				mNullValueOnWrite = ((FieldNullValueAttribute) attribs[0]).NullValueOnWrite;
 
                 if (NullValue != null) {
-                    if (!FieldTypeInternal.IsAssignableFrom(NullValue.GetType())) {
-                        throw new BadUsageException("The NullValue is of type: " + NullValue.GetType().Name +
-                                                    " that is not asignable to the field " + FieldInfo.Name +
-                                                    " of type: " +
-                                                    FieldTypeInternal.Name);
+                    if (!FieldTypeInternal.IsAssignableFrom(NullValue.GetType()))
+                    {
+                        throw new BadUsageException(
+                            $"The NullValue is of type: {NullValue.GetType().Name} which is not asignable to the field {FieldInfo.Name} Type: {FieldTypeInternal.Name}");
                     }
                 }
             }

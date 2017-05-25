@@ -6,7 +6,7 @@ namespace Visyn.Windows.Io.Exceptions
     /// Indicates that a string value can't be converted to a dest type.
     /// </summary>
     [Serializable]
-    public sealed class ConvertException : FileHelpers.FileHelpersException
+    public sealed class ConvertException : FileHelpersException
     {
         #region "  Fields & Property  "
 

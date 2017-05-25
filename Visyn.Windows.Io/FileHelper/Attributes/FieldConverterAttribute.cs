@@ -54,64 +54,64 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
 
             switch (converter) {
                 case ConverterKind.Date:
-                    convType = typeof (ConvertHelpers.DateTimeConverter);
+                    convType = typeof (DateTimeConverter);
                     break;
 
                 case ConverterKind.DateMultiFormat:
-                    convType = typeof (ConvertHelpers.DateTimeMultiFormatConverter);
+                    convType = typeof (DateTimeMultiFormatConverter);
                     break;
 
                 case ConverterKind.Byte:
-                    convType = typeof (ConvertHelpers.ByteConverter);
+                    convType = typeof (ByteConverter);
                     break;
 
                 case ConverterKind.SByte:
-                    convType = typeof (ConvertHelpers.SByteConverter);
+                    convType = typeof (SByteConverter);
                     break;
 
                 case ConverterKind.Int16:
-                    convType = typeof (ConvertHelpers.Int16Converter);
+                    convType = typeof (Int16Converter);
                     break;
                 case ConverterKind.Int32:
-                    convType = typeof (ConvertHelpers.Int32Converter);
+                    convType = typeof (Int32Converter);
                     break;
                 case ConverterKind.Int64:
-                    convType = typeof (ConvertHelpers.Int64Converter);
+                    convType = typeof (Int64Converter);
                     break;
 
                 case ConverterKind.UInt16:
-                    convType = typeof (ConvertHelpers.UInt16Converter);
+                    convType = typeof (UInt16Converter);
                     break;
                 case ConverterKind.UInt32:
-                    convType = typeof (ConvertHelpers.UInt32Converter);
+                    convType = typeof (UInt32Converter);
                     break;
                 case ConverterKind.UInt64:
-                    convType = typeof (ConvertHelpers.UInt64Converter);
+                    convType = typeof (UInt64Converter);
                     break;
 
                 case ConverterKind.Decimal:
-                    convType = typeof (ConvertHelpers.DecimalConverter);
+                    convType = typeof (DecimalConverter);
                     break;
                 case ConverterKind.Double:
-                    convType = typeof (ConvertHelpers.DoubleConverter);
+                    convType = typeof (DoubleConverter);
                     break;
                     // Added by Shreyas Narasimhan 17 March 2010
                 case ConverterKind.PercentDouble:
-                    convType = typeof (ConvertHelpers.PercentDoubleConverter);
+                    convType = typeof (PercentDoubleConverter);
                     break;
                 case ConverterKind.Single:
-                    convType = typeof (ConvertHelpers.SingleConverter);
+                    convType = typeof (SingleConverter);
                     break;
                 case ConverterKind.Boolean:
-                    convType = typeof (ConvertHelpers.BooleanConverter);
+                    convType = typeof (BooleanConverter);
                     break;
                     // Added by Alexander Obolonkov 2007.11.08
                 case ConverterKind.Char:
-                    convType = typeof (ConvertHelpers.CharConverter);
+                    convType = typeof (CharConverter);
                     break;
                     // Added by Alexander Obolonkov 2007.11.08
                 case ConverterKind.Guid:
-                    convType = typeof (ConvertHelpers.GuidConverter);
+                    convType = typeof (GuidConverter);
                     break;
                 default:
                     throw new BadUsageException("Converter '" + converter.ToString() +
@@ -164,7 +164,7 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
 
 
         /// <summary>The final concrete converter used for FieldToString and StringToField operations </summary>
-        public ConverterBase Converter { get; private set; }
+        public IFieldConverter Converter { get; private set; }
 
         /// <summary>The <see cref="ConverterKind"/> if a default converter is used </summary>
         public ConverterKind Kind { get; private set; }
@@ -175,7 +175,7 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
 
         private void CreateConverter(Type convType, object[] args)
         {
-            if (typeof (ConverterBase).IsAssignableFrom(convType))
+            if (typeof (IFieldConverter).IsAssignableFrom(convType))
             {
                 var constructor = convType.GetConstructor(
                     BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic,
@@ -183,22 +183,20 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
                     ArgsToTypes(args),
                     null);
 
-                if (constructor == null) {
-                    if (args.Length == 0) {
-                        throw new BadUsageException("Empty constructor for converter: " + convType.Name +
-                                                    " was not found. You must add a constructor without args (can be public or private)");
-                    }
-                    else {
-                        throw new BadUsageException("Constructor for converter: " + convType.Name +
-                                                    " with these arguments: (" + ArgsDesc(args) +
-                                                    ") was not found. You must add a constructor with this signature (can be public or private)");
-                    }
+                if (constructor == null)
+                {
+                    if (args.Length == 0) 
+                        throw new BadUsageException($"Empty constructor for converter: {convType.Name} was not found. You must add a constructor without args (can be public or private)");
+                    
+                    throw new BadUsageException($"Constructor for converter: {convType.Name} with these arguments: ({ ArgsDesc(args)}) was not found. You must add a constructor with this signature (can be public or private)");
                 }
 
-                try {
-                    Converter = (ConverterBase) constructor.Invoke(args);
+                try
+                {
+                    Converter = (IFieldConverter)constructor.Invoke(args) ;
                 }
-                catch (TargetInvocationException ex) {
+                catch (TargetInvocationException ex)
+                {
                     throw ex.InnerException;
                 }
             }

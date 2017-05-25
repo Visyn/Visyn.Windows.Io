@@ -3,14 +3,27 @@ using Visyn.Windows.Io.Exceptions;
 
 namespace Visyn.Windows.Io.FileHelper.Converters
 {
+    public abstract class ConverterBase<T> : ConverterBase
+    {
+        protected ConverterBase() : base(typeof(T))
+        {
+        }
+    }
+
     /// <summary>
     /// Base class to provide bi-directional
     /// Field - String conversion.
     /// </summary>
-    public abstract class ConverterBase : IConverter
+    public abstract class ConverterBase : IFieldConverter
     {
-        private static string mDefaultDateTimeFormat = "ddMMyyyy";
+        private static string _defaultDateTimeFormat = "ddMMyyyy";
 
+        /// <summary>
+        /// If the class returns false the engines don't pass null values to the converter. 
+        /// If true the engines pass all the values to the converter.
+        /// </summary>
+        public virtual bool CustomNullHandling => false;
+        public Type Type { get; }
 
         /// <summary>
         /// <para>Allow you to set the default Date Format used for the Converter.</para>
@@ -19,25 +32,33 @@ namespace Visyn.Windows.Io.FileHelper.Converters
         /// </summary>
         public static string DefaultDateTimeFormat
         {
-            get { return mDefaultDateTimeFormat; }
+            get { return _defaultDateTimeFormat; }
             set
             {
-                try {  DateTime.Now.ToString(value);
+                
+                try
+                {   // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+                    DateTime.Now.ToString(value);
                 }
-                catch {
+                catch
+                {
                     throw new BadUsageException("The format: '" + value + " is invalid for the DateTime Converter.");
                 }
-                mDefaultDateTimeFormat = value;
+                _defaultDateTimeFormat = value;
             }
         }
 
+        protected ConverterBase(Type converterType)
+        {
+            Type = converterType;
+        }
 
         /// <summary>
         /// Convert a string in the file to a field value.
         /// </summary>
-        /// <param name="from">The string to convert.</param>
+        /// <param name="text">The string to convert.</param>
         /// <returns>The Field value.</returns>
-        public abstract object StringToField(string from);
+        public abstract object StringToField(string text);
 
         /// <summary>
         /// Convert a field value to an string to write this to the file.
@@ -45,18 +66,7 @@ namespace Visyn.Windows.Io.FileHelper.Converters
         /// <remarks>The basic implementation just returns  from.ToString();</remarks>
         /// <param name="field">The field values to convert.</param>
         /// <returns>The string representing the field value.</returns>
-        public virtual string FieldToString(object field)
-        {
-            return field?.ToString() ?? string.Empty;
-        }
-
-        /// <summary>
-        /// If the class returns false the engines don't pass null values to the converter. 
-        /// If true the engines pass all the values to the converter.
-        /// </summary>
-        protected internal virtual bool CustomNullHandling => false;
-
-        internal Type mDestinationType;
+        public virtual string FieldToString(object field) => field?.ToString() ?? string.Empty;
 
         /// <summary>
         /// Throws a ConvertException with the passed values
@@ -64,9 +74,10 @@ namespace Visyn.Windows.Io.FileHelper.Converters
         /// <param name="from">The source string.</param>
         /// <param name="errorMsg" >The custom error msg.</param>
         /// <exception cref="ConvertException">Throw exception with values</exception>
-        protected void ThrowConvertException(string from, string errorMsg)
+        [Obsolete("Use extension method in ConverterExtensions")]
+        public void ThrowConvertException(string from, string errorMsg)
         {
-            throw new ConvertException(from, mDestinationType, errorMsg);
+            throw new ConvertException(from, Type, errorMsg);
         }
     }
 }

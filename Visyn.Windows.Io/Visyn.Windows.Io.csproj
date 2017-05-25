@@ -43,6 +43,8 @@
     <Compile Include="Exceptions\BadUsageException.cs" />
     <Compile Include="Exceptions\ErrorInfo.cs" />
     <Compile Include="Exceptions\ErrorManager.cs" />
+    <Compile Include="FileHelper\Converters\ConverterExtensions.cs" />
+    <Compile Include="FileHelper\Converters\ExceptionConverter.cs" />
     <Compile Include="Exceptions\FileHelpersException.cs" />
     <Compile Include="Exceptions\NullValueNotFoundException.cs" />
     <Compile Include="FileHelper\Attributes\Attributes.cs" />
@@ -73,12 +75,30 @@
     <Compile Include="FileHelper\Attributes\IgnoreInheritedClassAttribute.cs" />
     <Compile Include="FileHelper\Attributes\IgnoreLastAttribute.cs" />
     <Compile Include="FileHelper\Attributes\TypedRecordAttribute.cs" />
+    <Compile Include="FileHelper\Converters\BooleanConverter.cs" />
+    <Compile Include="FileHelper\Converters\ByteConverter.cs" />
+    <Compile Include="FileHelper\Converters\CharConverter.cs" />
     <Compile Include="FileHelper\Converters\ConverterBase.cs" />
     <Compile Include="Exceptions\ConvertException.cs" />
-    <Compile Include="FileHelper\Converters\ConvertHelpers.cs" />
+    <Compile Include="FileHelper\Converters\ConverterFactory.cs" />
+    <Compile Include="FileHelper\Converters\CultureConverter.cs" />
+    <Compile Include="FileHelper\Converters\DateTimeConverter.cs" />
+    <Compile Include="FileHelper\Converters\DateTimeMultiFormatConverter.cs" />
+    <Compile Include="FileHelper\Converters\DecimalConverter.cs" />
+    <Compile Include="FileHelper\Converters\DoubleConverter.cs" />
     <Compile Include="FileHelper\Converters\EnumConverter.cs" />
-    <Compile Include="FileHelper\Converters\IConverterBase.cs" />
+    <Compile Include="FileHelper\Converters\GuidConverter.cs" />
+    <Compile Include="FileHelper\Converters\IFieldConverter.cs" />
+    <Compile Include="FileHelper\Converters\Int16Converter.cs" />
+    <Compile Include="FileHelper\Converters\Int32Converter.cs" />
+    <Compile Include="FileHelper\Converters\Int64Converter.cs" />
+    <Compile Include="FileHelper\Converters\PercentDoubleConverter.cs" />
+    <Compile Include="FileHelper\Converters\SByteConverter.cs" />
+    <Compile Include="FileHelper\Converters\SingleConverter.cs" />
     <Compile Include="FileHelper\Converters\TimeSpanConverter.cs" />
+    <Compile Include="FileHelper\Converters\UInt16Converter.cs" />
+    <Compile Include="FileHelper\Converters\UInt32Converter.cs" />
+    <Compile Include="FileHelper\Converters\UInt64Converter.cs" />
     <Compile Include="FileHelper\Converters\Vector3DConverter.cs" />
     <Compile Include="FileHelper\Core\Attributes.cs" />
     <Compile Include="FileHelper\Core\ConditionHelper.cs" />
@@ -123,12 +143,9 @@
     <Compile Include="FileHelper\Interfaces\INotifyRead.cs" />
     <Compile Include="FileHelper\Interfaces\INotifyWrite.cs" />
     <Compile Include="FileHelper\Interfaces\ITransformable.cs" />
-    <Compile Include="FileHelper\Messages\GenerateMessages1.autogen.cs">
-      <DependentUpon>GenerateMessages.tt</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="FileHelper\Messages\MessageBase.cs" />
+    <Compile Include="FileHelper\Messages\Messages.cs" />
+    <Compile Include="FileHelper\Messages\TypesOfMessages.cs" />
     <Compile Include="FileHelper\NewLineDelimitedRecordReader.cs" />
     <Compile Include="FileHelper\Core\ReflectionHelper.cs" />
     <Compile Include="FileHelper\Core\VisynRecordInfo.cs" />
@@ -146,10 +163,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Customers\Lucent\FileHelpers\FileHelpers\FileHelpers.csproj">
-      <Project>{eb8633ff-ceed-40ee-8d1a-ca1bf5678c42}</Project>
-      <Name>FileHelpers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Visyn.Core\Visyn.Core.csproj">
       <Project>{9c2a8976-44c2-47e1-a56a-d21c8794def0}</Project>
       <Name>Visyn.Core</Name>
@@ -164,12 +177,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="FileHelper\Messages\GenerateMessages.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>GenerateMessages1.autogen.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
