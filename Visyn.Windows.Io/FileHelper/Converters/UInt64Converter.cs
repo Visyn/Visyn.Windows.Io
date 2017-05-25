@@ -7,35 +7,30 @@ namespace Visyn.Windows.Io.FileHelper.Converters
     /// <summary>
     /// Unsigned long converter
     /// </summary>
-    internal sealed class UInt64Converter : CultureConverter
+    internal sealed class UInt64Converter : CultureConverter<UInt64>
     {
         /// <summary>
         /// Unsigned long converter
         /// </summary>
-        public UInt64Converter() : this(ConverterFactory.DefaultDecimalSep) { }
+        public UInt64Converter() : this(ConverterFactory.DefaultDecimalSeparator) { }
 
         /// <summary>
         /// Unsigned long with decimal separator
         /// </summary>
-        /// <param name="decimalSep">dot or comma for separator</param>
-        public UInt64Converter(string decimalSep)
-            : base(typeof(UInt64), decimalSep) { }
+        /// <param name="decimalSeparator">dot or comma for separator</param>
+        public UInt64Converter(string decimalSeparator) : base( decimalSeparator) { }
 
         /// <summary>
         /// Convert a string to an unsigned integer long
         /// </summary>
-        /// <param name="from">String value to convert</param>
+        /// <param name="text">String value to convert</param>
         /// <returns>Unsigned long value</returns>
-        protected override object ParseString(string from)
+        protected override object ParseString(string text)
         {
             ulong res;
-            if (
-                !UInt64.TryParse(StringHelper.RemoveBlanks(from),
-                    NumberStyles.Number | NumberStyles.AllowExponent,
-                    Culture,
-                    out res))
-                throw new ConvertException(from, Type);
-            return res;
+            if (UInt64.TryParse(StringHelper.RemoveBlanks(text), NumberStyles.Number | NumberStyles.AllowExponent, Culture, out res))
+                return res;
+            throw new ConvertException(text, Type);
         }
     }
 }

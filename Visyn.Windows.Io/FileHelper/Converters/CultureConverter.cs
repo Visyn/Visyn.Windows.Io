@@ -6,7 +6,7 @@ namespace Visyn.Windows.Io.FileHelper.Converters
     /// <summary>
     /// Convert a numeric value with separators into a value
     /// </summary>
-    internal abstract class CultureConverter : ConverterBase
+    internal abstract class CultureConverter<T> : ConverterBase<T>
     {
         /// <summary>
         /// Culture information based on the separator
@@ -14,18 +14,13 @@ namespace Visyn.Windows.Io.FileHelper.Converters
         protected CultureInfo Culture;
 
         /// <summary>
-        /// Type fo field being converted
-        /// </summary>
- //       protected Type Type;
-
-        /// <summary>
         /// Convert to a type given a decimal separator
         /// </summary>
         /// <param name="T">type we are converting</param>
-        /// <param name="decimalSep">Separator</param>
-        protected CultureConverter(Type T, string decimalSep) : base(T)
+        /// <param name="decimalSeparator">Separator</param>
+        protected CultureConverter(string decimalSeparator)// : base(T)
         {
-            Culture = ConverterFactory.CreateCulture(decimalSep);
+            Culture = ConverterFactory.CreateCulture(decimalSeparator);
         }
 
         /// <summary>
@@ -45,8 +40,8 @@ namespace Visyn.Windows.Io.FileHelper.Converters
         /// <summary>
         /// Convert a string into the return object required
         /// </summary>
-        /// <param name="from">Value to convert (string)</param>
+        /// <param name="text">Value to convert (string)</param>
         /// <returns>Converted object</returns>
-        protected abstract object ParseString(string from);
+        protected abstract object ParseString(string text);
     }
 }

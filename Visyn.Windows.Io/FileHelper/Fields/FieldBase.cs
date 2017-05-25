@@ -443,11 +443,9 @@ namespace Visyn.Windows.Io.FileHelper.Fields
             if (Converter != null)
             {
                 if(Converter.Type == null)
-                    throw new ArgumentNullException(nameof(IFieldConverter.Type),
-                        $"Converter type [{Converter.GetType().Name}] can not be null!");
+                    throw new ArgumentNullException(nameof(IFieldConverter.Type), $"Converter type [{Converter.GetType().Name}] can not be null!");
                 if(Converter.Type != FieldTypeInternal)
-                    throw new TypeMismatchException(Converter.Type,
-                        $"{Converter.GetType().Name} destination type {Converter.Type} != expected type {FieldTypeInternal}");
+                    throw new TypeMismatchException(Converter.Type, $"{Converter.GetType().Name} destination type {Converter.Type} != expected type {FieldTypeInternal}");
                 //Converter.mDestinationType = FieldTypeInternal;
             }
 

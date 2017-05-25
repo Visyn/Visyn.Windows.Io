@@ -14,20 +14,20 @@ namespace Visyn.Windows.Io.FileHelper.Converters
     /// </remarks>
     internal static class ConverterFactory
     {
-        public const string DefaultDecimalSep = ".";
+        public const string DefaultDecimalSeparator = ".";
 
         #region "  CreateCulture  "
 
         /// <summary>
         /// Return culture information for with comma decimal separator or comma decimal separator
         /// </summary>
-        /// <param name="decimalSep">Decimal separator string</param>
+        /// <param name="decimalSeperator">Decimal separator string</param>
         /// <returns>Cultural information based on separator</returns>
-        internal static CultureInfo CreateCulture(string decimalSep)
+        internal static CultureInfo CreateCulture(string decimalSeperator)
         {
             var ci = new CultureInfo(CultureInfo.CurrentCulture.LCID);
 
-            switch (decimalSep)
+            switch (decimalSeperator)
             {
                 case ".":
                     ci.NumberFormat.NumberDecimalSeparator = ".";

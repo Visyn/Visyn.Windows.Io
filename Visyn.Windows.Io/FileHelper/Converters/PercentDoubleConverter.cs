@@ -10,48 +10,39 @@ namespace Visyn.Windows.Io.FileHelper.Converters
     /// It gives a value which is basically number / 100.
     /// </summary>
     /// <remarks>Edited : Shreyas Narasimhan (17 March 2010) </remarks>
-    internal sealed class PercentDoubleConverter : CultureConverter
+    internal sealed class PercentDoubleConverter : CultureConverter<double>
     {
         /// <summary>
         /// Convert a value to a floating point from a percentage
         /// </summary>
-        public PercentDoubleConverter() : this(ConverterFactory.DefaultDecimalSep) { }
+        public PercentDoubleConverter() : this(ConverterFactory.DefaultDecimalSeparator) { }
 
         /// <summary>
         /// Convert a value to a floating point from a percentage
         /// </summary>
-        /// <param name="decimalSep">dot or comma for separator</param>
-        public PercentDoubleConverter(string decimalSep)
-            : base(typeof(Double), decimalSep) { }
+        /// <param name="decimalSeparator">dot or comma for separator</param>
+        public PercentDoubleConverter(string decimalSeparator) : base( decimalSeparator) { }
 
         /// <summary>
         /// Convert a string to an floating point from percentage
         /// </summary>
-        /// <param name="from">String value to convert</param>
+        /// <param name="text">String value to convert</param>
         /// <returns>floating point value</returns>
-        protected override object ParseString(string from)
+        protected override object ParseString(string text)
         {
-            double res;
-            var blanksRemoved = StringHelper.RemoveBlanks(from);
+            double result;
+            var blanksRemoved = StringHelper.RemoveBlanks(text);
             if (blanksRemoved.EndsWith("%"))
             {
-                if (
-                    !Double.TryParse(blanksRemoved,
-                        NumberStyles.Number | NumberStyles.AllowExponent,
-                        Culture,
-                        out res))
-                    throw new ConvertException(from, Type);
-                return res / 100.0;
+                if (double.TryParse(blanksRemoved, NumberStyles.Number | NumberStyles.AllowExponent, Culture, out result))
+                    return result / 100.0;
+                throw new ConvertException(text, Type);
             }
             else
             {
-                if (
-                    !Double.TryParse(blanksRemoved,
-                        NumberStyles.Number | NumberStyles.AllowExponent,
-                        Culture,
-                        out res))
-                    throw new ConvertException(from, Type);
-                return res;
+                if (double.TryParse(blanksRemoved, NumberStyles.Number | NumberStyles.AllowExponent, Culture, out result))
+                    return result;
+                throw new ConvertException(text, Type);
             }
         }
     }

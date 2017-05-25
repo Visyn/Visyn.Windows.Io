@@ -21,10 +21,10 @@ namespace Visyn.Windows.Io.FileHelper
     public class VisynFileHelper<T> : EventEngineBase<T>, IFileHelperEngine<T>
         where T : class
     {
-        internal const int DefaultReadBufferSize = 16 * 1024;
-        internal const int DefaultWriteBufferSize = 16 * 1024;
+        //internal const int DefaultReadBufferSize = 16 * 1024;
+        //internal const int DefaultWriteBufferSize = 16 * 1024;
 
-        private readonly bool mObjectEngine = typeof(T) == typeof(object);
+        private readonly bool _objectEngine = typeof(T) == typeof(object);
 
         #region "  Constructor  "
 
@@ -92,7 +92,7 @@ namespace Visyn.Windows.Io.FileHelper
         {
             var result = ReadStreamAsList(reader, maxRecords, null);
 
-            if (mObjectEngine) return (T[])((ArrayList)result).ToArray(RecordInfo.RecordType);
+            if (_objectEngine) return (T[])((ArrayList)result).ToArray(RecordInfo.RecordType);
             return ((List<T>)result).ToArray();
         }
 
@@ -113,7 +113,7 @@ namespace Visyn.Windows.Io.FileHelper
                 ResetFields();
 
 
-                if (mObjectEngine)
+                if (_objectEngine)
                     result = new ArrayList();
                 else
                     result = new List<T>();

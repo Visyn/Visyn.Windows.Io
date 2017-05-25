@@ -137,10 +137,9 @@ namespace Visyn.Windows.Io.FileHelper.Core
         {
             var recordAttribute = Attributes.GetFirstInherited<TypedRecordAttribute>(RecordType);
 
-            if (recordAttribute == null) {
-                throw new BadUsageException(Messages.Messages.Errors.ClassWithOutRecordAttribute
-                    .ClassName(RecordType.Name)
-                    .Text);
+            if (recordAttribute == null)
+            {
+                throw new BadUsageException(Messages.Messages.Errors.ClassWithOutRecordAttribute.ClassName(RecordType.Name).Text);
             }
 
             if (ReflectionHelper.GetDefaultConstructor(RecordType) == null) {

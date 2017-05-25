@@ -14,8 +14,7 @@ namespace Visyn.Windows.Io.FileHelper
     /// </summary>
     /// <typeparam name="T">Specific engine</typeparam>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public abstract class EventEngineBase<T> : EngineBase, IFileHelperEngine<T>
-        where T : class
+    public abstract class EventEngineBase<T> : EngineBase, IFileHelperEngine<T> where T : class
     {
         /// <summary>
         /// Define an event based on an engine, based on a record
