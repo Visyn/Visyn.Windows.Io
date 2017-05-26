@@ -189,11 +189,11 @@ namespace Visyn.Windows.Io.FileHelper.Fields
         /// <param name="fi">Information about this field</param>
         /// <param name="recordAttribute">Type of record we are reading</param>
         /// <returns>Null if not used</returns>
-        public static FieldBase CreateField(FieldInfo fi, TypedRecordAttribute recordAttribute)
+        public static FieldBase CreateField(FieldInfo fi, ITypedRecordAttribute recordAttribute)
         {
             FieldBase res = null;
             MemberInfo mi = fi;
-            var memberName = "The field: '" + fi.Name;
+            var memberName = $"The field: '{ fi.Name}'";
             var fieldType = fi.FieldType;             
             var fieldFriendlyName = AutoPropertyName(fi);
             if (string.IsNullOrEmpty(fieldFriendlyName)==false)
@@ -201,7 +201,7 @@ namespace Visyn.Windows.Io.FileHelper.Fields
                 var prop = fi.DeclaringType.GetProperty(fieldFriendlyName);
                 if (prop != null)
                 {
-                    memberName = "The property: '" + prop.Name;
+                    memberName = $"The property: '{ prop.Name}'";
                     mi = prop;
                 }
                 else
@@ -217,66 +217,63 @@ namespace Visyn.Windows.Io.FileHelper.Fields
 #pragma warning restore 612,618
                 return null;
 
-            
-            
             var attributes = (FieldAttribute[]) mi.GetCustomAttributes(typeof (FieldAttribute), true);
 
             // CHECK USAGE ERRORS !!!
 
             // Fixed length record and no attributes at all
-            if (recordAttribute is FixedLengthRecordAttribute &&
-                attributes.Length == 0) {
-                throw new BadUsageException(memberName +
-                                            "' must be marked the FieldFixedLength attribute because the record class is marked with FixedLengthRecord.");
+            if (recordAttribute is FixedLengthRecordAttribute && attributes.Length == 0)
+            {
+                throw new BadUsageException($"{memberName} must be marked the FieldFixedLength attribute because the record class is marked with FixedLengthRecord.");
             }
 
-            if (attributes.Length > 1) {
-                throw new BadUsageException(memberName +
-                                            "' has a FieldFixedLength and a FieldDelimiter attribute.");
+            if (attributes.Length > 1)
+            {
+                throw new BadUsageException($"{memberName} has a FieldFixedLength and a FieldDelimiter attribute.");
             }
 
-            if (recordAttribute is DelimitedRecordAttribute &&
-                mi.IsDefined(typeof (FieldAlignAttribute), false)) {
-                throw new BadUsageException(memberName +
-                                            "' can't be marked with FieldAlign attribute, it is only valid for fixed length records and are used only for write purpose.");
+            if (recordAttribute is DelimitedRecordAttribute && mi.IsDefined(typeof (FieldAlignAttribute), false))
+            {
+                throw new BadUsageException($"{memberName} can't be marked with FieldAlign attribute, it is only valid for fixed length records and are used only for write purpose.");
             }
 
-            if (fieldType.IsArray == false &&
-                mi.IsDefined(typeof (FieldArrayLengthAttribute), false)) {
-                throw new BadUsageException(memberName +
-                                            "' can't be marked with FieldArrayLength attribute is only valid for array fields.");
+            if (fieldType.IsArray == false && mi.IsDefined(typeof (FieldArrayLengthAttribute), false))
+            {
+                throw new BadUsageException($"{memberName} can't be marked with FieldArrayLength attribute is only valid for array fields.");
             }
 
             // PROCESS IN NORMAL CONDITIONS
-            if (attributes.Length > 0) {
-                var fieldAttb = attributes[0];
+            if (attributes.Length > 0)
+            {
+                var fieldAttribute = attributes[0];
 
-                if (fieldAttb is FieldFixedLengthAttribute) {
+                var fixedLengthAttribute = fieldAttribute as FieldFixedLengthAttribute;
+                if (fixedLengthAttribute != null)
+                {
                     // Fixed Field
-                    if (recordAttribute is DelimitedRecordAttribute) {
-                        throw new BadUsageException(memberName +
-                                                    "' can't be marked with FieldFixedLength attribute, it is only for the FixedLengthRecords not for delimited ones.");
+                    if (recordAttribute is DelimitedRecordAttribute)
+                    {
+                        throw new BadUsageException($"{memberName} can't be marked with FieldFixedLength attribute, it is only for the FixedLengthRecords not for delimited ones.");
                     }
 
-                    var attbFixedLength = (FieldFixedLengthAttribute) fieldAttb;
-                    var attbAlign = mi.GetFirst<FieldAlignAttribute>();
+                    var alignAttribute = mi.GetFirst<FieldAlignAttribute>();
 
-                    res = new FixedLengthField(fi, attbFixedLength.Length, attbAlign);
+                    res = new FixedLengthField(fi, fixedLengthAttribute.Length, alignAttribute);
                     ((FixedLengthField) res).FixedMode = ((FixedLengthRecordAttribute) recordAttribute).FixedMode;
                 }
-                else if (fieldAttb is FieldDelimiterAttribute) {
+                else if (fieldAttribute is FieldDelimiterAttribute)
+                {
                     // Delimited Field
-                    if (recordAttribute is FixedLengthRecordAttribute) {
-                        throw new BadUsageException(memberName +
-                                                    "' can't be marked with FieldDelimiter attribute, it is only for DelimitedRecords not for fixed ones.");
+                    if (recordAttribute is FixedLengthRecordAttribute)
+                    {
+                        throw new BadUsageException($"{memberName} can't be marked with FieldDelimiter attribute, it is only for DelimitedRecords not for fixed ones.");
                     }
-
-                    res = new DelimitedField(fi, ((FieldDelimiterAttribute) fieldAttb).Delimiter);
+                    res = new DelimitedField(fi, ((FieldDelimiterAttribute) fieldAttribute).Delimiter);
                 }
-                else {
+                else
+                {
                     throw new BadUsageException(
-                        "Custom field attributes are not currently supported. Unknown attribute: " +
-                        fieldAttb.GetType().Name + " on field: " + fi.Name);
+                        $"Custom field attributes are not currently supported. Unknown attribute: {fieldAttribute.GetType().Name} on field: { fi.Name}");
                 }
             }
             else // attributes.Length == 0
@@ -289,7 +286,8 @@ namespace Visyn.Windows.Io.FileHelper.Fields
                 }
             }
 
-            if (res != null) {
+            if (res != null)
+            {
                 // FieldDiscarded
                 res.Discarded = mi.IsDefined(typeof (FieldValueDiscardedAttribute), false);
 
@@ -300,27 +298,19 @@ namespace Visyn.Windows.Io.FileHelper.Fields
                     });
 
                 // FieldQuoted
-                Attributes.Attributes.WorkWithFirst<FieldQuotedAttribute>(mi,
-                    (x) => {
-                        if (res is FixedLengthField) {
-                            throw new BadUsageException(
-                                memberName +
-                                "' can't be marked with FieldQuoted attribute, it is only for the delimited records.");
-                        }
+                mi.WorkWithFirst<FieldQuotedAttribute>((x) => {
+                        if (res is FixedLengthField)  throw new BadUsageException( $"{memberName} can't be marked with FieldQuoted attribute, it is only for the delimited records.");
 
-                        ((DelimitedField) res).QuoteChar =
-                            x.QuoteChar;
-                        ((DelimitedField) res).QuoteMode =
-                            x.QuoteMode;
-                        ((DelimitedField) res).QuoteMultiline =
-                            x.QuoteMultiline;
+                        ((DelimitedField) res).QuoteChar = x.QuoteChar;
+                        ((DelimitedField) res).QuoteMode = x.QuoteMode;
+                        ((DelimitedField) res).QuoteMultiline = x.QuoteMultiline;
                     });
 
                 // FieldOrder
-                Attributes.Attributes.WorkWithFirst<FieldOrderAttribute>(mi, x => res.FieldOrder = x.Order);
+                mi.WorkWithFirst<FieldOrderAttribute>(x => res.FieldOrder = x.Order);
 
                 // FieldCaption
-                Attributes.Attributes.WorkWithFirst<FieldCaptionAttribute>(mi, x => res.FieldCaption = x.Caption);
+                mi.WorkWithFirst<FieldCaptionAttribute>(x => res.FieldCaption = x.Caption);
 
                 // FieldOptional
                 res.IsOptional = mi.IsDefined(typeof(FieldOptionalAttribute), false);
@@ -332,7 +322,8 @@ namespace Visyn.Windows.Io.FileHelper.Fields
                 res.IsNotEmpty = mi.IsDefined(typeof(FieldNotEmptyAttribute), false);
 
                 // FieldArrayLength
-                if (fieldType.IsArray) {
+                if (fieldType.IsArray)
+                {
                     res.IsArray = true;
                     res.ArrayType = fieldType.GetElementType();
 
@@ -340,18 +331,13 @@ namespace Visyn.Windows.Io.FileHelper.Fields
                     res.ArrayMinLength = int.MinValue;
                     res.ArrayMaxLength = int.MaxValue;
 
-                    Attributes.Attributes.WorkWithFirst<FieldArrayLengthAttribute>(mi,
-                        (x) => {
-                            res.ArrayMinLength = x.MinLength;
-                            res.ArrayMaxLength = x.MaxLength;
+                    mi.WorkWithFirst<FieldArrayLengthAttribute>((x) => {
+                        res.ArrayMinLength = x.MinLength;
+                        res.ArrayMaxLength = x.MaxLength;
 
-                            if (res.ArrayMaxLength < res.ArrayMinLength ||
-                                res.ArrayMinLength < 0 ||
-                                res.ArrayMaxLength <= 0) {
-                                throw new BadUsageException(memberName +
-                                                            " has invalid length values in the [FieldArrayLength] attribute.");
-                            }
-                        });
+                        if (res.ArrayMaxLength < res.ArrayMinLength || res.ArrayMinLength < 0 || res.ArrayMaxLength <= 0)
+                            throw new BadUsageException($"{memberName} has invalid length values in the [FieldArrayLength] attribute.");
+                    });
                 }
             }
 
@@ -366,14 +352,12 @@ namespace Visyn.Windows.Io.FileHelper.Fields
 
         public static string AutoPropertyName(FieldInfo fi)
         {
-            if (fi.IsDefined(typeof(CompilerGeneratedAttribute), false))
-            {
-                if (fi.Name.EndsWith("__BackingField") &&
-                    fi.Name.StartsWith("<") &&
-                    fi.Name.Contains(">"))
-                    return fi.Name.Substring(1, fi.Name.IndexOf(">") - 1);
-                
-            }
+            if (!fi.IsDefined(typeof(CompilerGeneratedAttribute), false)) return "";
+
+            if (fi.Name.EndsWith("__BackingField") &&
+                fi.Name.StartsWith("<") &&
+                fi.Name.Contains(">"))
+                return fi.Name.Substring(1, fi.Name.IndexOf(">") - 1);
             return "";
         }
 
@@ -496,13 +480,8 @@ namespace Visyn.Windows.Io.FileHelper.Fields
         /// <returns>String representation of field</returns>
         public string CreateFieldString(object fieldValue)
         {
-            if (Converter == null)
-            {
-                if (fieldValue == null)
-                    return string.Empty;
-                return fieldValue.ToString();
-            }
-            return Converter.FieldToString(fieldValue);
+            if (Converter != null) return Converter.FieldToString(fieldValue);
+            return fieldValue?.ToString() ?? string.Empty;
         }
 
         #endregion
@@ -518,25 +497,19 @@ namespace Visyn.Windows.Io.FileHelper.Fields
         {
             //-> extract only what I need
 
-            if (InNewLine) {
-                // Any trailing characters, terminate
-                if (line.EmptyFromPos() == false) {
-                    throw new BadUsageException(line,
-                        "Text '" + line.CurrentString +
-                        "' found before the new line of the field: " + FieldInfo.Name +
-                        " (this is not allowed when you use [FieldInNewLine])");
-                }
+            if (InNewLine)
+            {   // Any trailing characters, terminate
+                if (line.EmptyFromPos() == false) 
+                    throw new BadUsageException(line, $"Text '{line.CurrentString}' found before the new line of the field: {FieldInfo.Name} (this is not allowed when you use [FieldInNewLine])");
 
                 line.ReLoad(line.mReader.ReadNextLine());
 
-                if (line.mLineStr == null) {
-                    throw new BadUsageException(line,
-                        "End of stream found parsing the field " + FieldInfo.Name +
-                        ". Please check the class record.");
-                }
+                if (line.mLineStr == null) 
+                    throw new BadUsageException(line, $"End of stream found parsing the field {FieldInfo.Name}. Please check the class record.");
             }
 
-            if (IsArray == false) {
+            if (IsArray == false)
+            {
                 var info = ExtractFieldString(line);
                 if (info.mCustomExtractedString == null)
                     line.mCurrentPos = info.ExtractedTo + 1;
@@ -545,27 +518,25 @@ namespace Visyn.Windows.Io.FileHelper.Fields
 
                 return Discarded ? GetDiscardedNullValue() : AssignFromString(info, line).Value;
             }
-            if (ArrayMinLength <= 0)
-                ArrayMinLength = 0;
+            if (ArrayMinLength <= 0) ArrayMinLength = 0;
 
             var i = 0;
 
             var res = new ArrayList(Math.Max(ArrayMinLength, 10));
 
-            while (line.mCurrentPos - CharsToDiscard < line.mLineStr.Length &&
-                   i < ArrayMaxLength) {
+            while (line.mCurrentPos - CharsToDiscard < line.mLineStr.Length && i < ArrayMaxLength)
+            {
                 var info = ExtractFieldString(line);
                 if (info.mCustomExtractedString == null)
                     line.mCurrentPos = info.ExtractedTo + 1;
 
                 line.mCurrentPos += CharsToDiscard;
 
-                try {
+                try
+                {
                     var value = AssignFromString(info, line);
 
-                    if (value.NullValueUsed &&
-                        i == 0 &&
-                        line.IsEOL())
+                    if (value.NullValueUsed && i == 0 && line.IsEOL())
                         break;
 
                     res.Add(value.Value);
@@ -579,15 +550,12 @@ namespace Visyn.Windows.Io.FileHelper.Fields
                 i++;
             }
 
-            if (res.Count < ArrayMinLength) {
-                throw new InvalidOperationException(
-                    $"Line: {line.mReader.LineNumber} Column: {line.mCurrentPos} Field: {FieldInfo.Name}. The array has only {res.Count} values, less than the minimum length of {ArrayMinLength}");
-            }
-            if (IsLast && line.IsEOL() == false) {
-                throw new InvalidOperationException(
-                    $"Line: {line.mReader.LineNumber} Column: {line.mCurrentPos} Field: {FieldInfo.Name}. The array has more values than the maximum length of {ArrayMaxLength}");
-            }
+            if (res.Count < ArrayMinLength) 
+                throw new InvalidOperationException( $"Line: {line.mReader.LineNumber} Column: {line.mCurrentPos} Field: {FieldInfo.Name}. The array has only {res.Count} values, less than the minimum length of {ArrayMinLength}");
 
+            if (IsLast && line.IsEOL() == false) 
+                throw new InvalidOperationException( $"Line: {line.mReader.LineNumber} Column: {line.mCurrentPos} Field: {FieldInfo.Name}. The array has more values than the maximum length of {ArrayMaxLength}");
+            
             // TODO:   is there a reason we go through all the array processing then discard it
             return Discarded ? null : res.ToArray(ArrayType);
         }
@@ -616,30 +584,28 @@ namespace Visyn.Windows.Io.FileHelper.Fields
                 if (IsNotEmpty && string.IsNullOrEmpty(extractedString)) {
                     throw new InvalidOperationException("The value is empty and must be populated.");
                 }
-                if (Converter == null) {
+                if (Converter == null)
+                {
                     if (IsStringField)
                         val = TrimString(extractedString);
-                    else {
+                    else
+                    {
                         extractedString = extractedString.Trim();
 
-                        if (extractedString.Length == 0) {
-                            return new AssignResult {
-                                Value = GetNullValue(line),
-                                NullValueUsed = true
-                            };
+                        if (extractedString.Length == 0)
+                        {
+                            return new AssignResult{ Value = GetNullValue(line), NullValueUsed = true };
                         }
                         val = Convert.ChangeType(extractedString, FieldTypeInternal, null);
                     }
                 }
-                else {
+                else
+                {
                     var trimmedString = extractedString.Trim();
 
-                    if (Converter.CustomNullHandling == false &&
-                        trimmedString.Length == 0) {
-                        return new AssignResult {
-                            Value = GetNullValue(line),
-                            NullValueUsed = true
-                        };
+                    if (Converter.CustomNullHandling == false && trimmedString.Length == 0)
+                    {
+                        return new AssignResult{ Value = GetNullValue(line), NullValueUsed = true };
                     }
                     val = Converter.StringToField(TrimMode == TrimMode.Both ? trimmedString : TrimString(extractedString));
 
@@ -649,35 +615,26 @@ namespace Visyn.Windows.Io.FileHelper.Fields
                 }
                 return new AssignResult {  Value = val };
             }
-            catch (ConvertException ex) {
+            catch (ConvertException ex)
+            {
                 ex.FieldName = FieldInfo.Name;
                 ex.LineNumber = line.mReader.LineNumber;
                 ex.ColumnNumber = fieldString.ExtractedFrom + 1;
                 throw;
             }
-            catch (BadUsageException) {
+            catch (BadUsageException)
+            {
                 throw;
             }
             catch (Exception ex)
             {
-                if (Converter == null ||
-                    Converter.GetType().Assembly == typeof (FieldBase).Assembly) {
-                    throw new ConvertException(extractedString,
-                        FieldTypeInternal,
-                        FieldInfo.Name,
-                        line.mReader.LineNumber,
-                        fieldString.ExtractedFrom + 1,
-                        ex.Message,
-                        ex);
+                if (Converter == null || Converter.GetType().Assembly == typeof (FieldBase).Assembly)
+                {
+                    throw new ConvertException(extractedString, FieldTypeInternal, FieldInfo.Name, line.mReader.LineNumber, fieldString.ExtractedFrom + 1,ex.Message, ex);
                 }
-                throw new ConvertException(extractedString,
-                    FieldTypeInternal,
-                    FieldInfo.Name,
-                    line.mReader.LineNumber,
-                    fieldString.ExtractedFrom + 1,
-                    "Your custom converter: " + Converter.GetType().Name + " throws an " + ex.GetType().Name +
-                    " with the message: " + ex.Message,
-                    ex);
+                throw new ConvertException(extractedString, FieldTypeInternal, FieldInfo.Name,
+                    line.mReader.LineNumber, fieldString.ExtractedFrom + 1,
+                    $"Your custom converter: { Converter.GetType().Name} throws an {ex.GetType().Name} with the message: {ex.Message}",ex);
             }
         }
 
@@ -685,15 +642,11 @@ namespace Visyn.Windows.Io.FileHelper.Fields
         {
             switch (TrimMode) {
                 case TrimMode.None: return extractedString;
-
                 case TrimMode.Both:  return extractedString.Trim();
-
                 case TrimMode.Left: return extractedString.TrimStart();
-
                 case TrimMode.Right: return extractedString.TrimEnd();
-
                 default:
-                    throw new Exception("Trim mode invalid in FieldBase.TrimString -> " + TrimMode);
+                    throw new Exception($"Trim mode invalid in FieldBase.TrimString -> {TrimMode}");
             }
         }
 
@@ -745,14 +698,13 @@ namespace Visyn.Windows.Io.FileHelper.Fields
         {
             object val = null;
 
-            if (fieldValue == null) {
+            if (fieldValue == null)
+            {
                 if (NullValue == null)
                 {
-                    if (FieldTypeInternal.IsValueType &&
-                        Nullable.GetUnderlyingType(FieldTypeInternal) == null) {
-                        throw new BadUsageException(
-                            "Null Value found. You must specify a FieldNullValueAttribute in the " + FieldInfo.Name +
-                            " field of type " + FieldTypeInternal.Name + ", because this is a ValueType.");
+                    if (FieldTypeInternal.IsValueType && Nullable.GetUnderlyingType(FieldTypeInternal) == null)
+                    {
+                        throw new BadUsageException( $"Null Value found. You must specify a FieldNullValueAttribute in the {FieldInfo.Name} field of type {FieldTypeInternal.Name}, because this is a ValueType.");
                     }
                     val = null;
                 }
@@ -761,18 +713,22 @@ namespace Visyn.Windows.Io.FileHelper.Fields
             }
             else if (FieldTypeInternal == fieldValue.GetType())
                 val = fieldValue;
-            else {
+            else
+            {
                 if (Converter == null)
                     val = Convert.ChangeType(fieldValue, FieldTypeInternal, null);
-                else {
-                    try {
+                else
+                {
+                    try
+                    {
                         if (Nullable.GetUnderlyingType(FieldTypeInternal) != null &&
                             Nullable.GetUnderlyingType(FieldTypeInternal) == fieldValue.GetType())
                             val = fieldValue;
                         else
                             val = Convert.ChangeType(fieldValue, FieldTypeInternal, null);
                     }
-                    catch {
+                    catch
+                    {
                         val = Converter.StringToField(fieldValue.ToString());
                     }
                 }
@@ -798,25 +754,26 @@ namespace Visyn.Windows.Io.FileHelper.Fields
             if (InNewLine == true)
                 sb.Append(Environment.NewLine);
 
-            if (IsArray) {
-                if (fieldValue == null) {
-                    if (0 < ArrayMinLength) {
+            if (IsArray)
+            {
+                if (fieldValue == null)
+                {
+                    if (0 < ArrayMinLength)
                         throw new InvalidOperationException( $"Field: {FieldInfo.Name}. The array is null, but the minimum length is {ArrayMinLength}");
-                    }
                     return;
                 }
 
                 var array = (IList) fieldValue;
 
-                if (array.Count < ArrayMinLength) {
+                if (array.Count < ArrayMinLength)
                     throw new InvalidOperationException( $"Field: {FieldInfo.Name}. The array has {array.Count} values, but the minimum length is {ArrayMinLength}");
-                }
 
-                if (array.Count > ArrayMaxLength) {
+                if (array.Count > ArrayMaxLength)
                     throw new InvalidOperationException( $"Field: {FieldInfo.Name}. The array has {array.Count} values, but the maximum length is {ArrayMaxLength}");
-                }
+                
 
-                for (var i = 0; i < array.Count; i++) {
+                for (var i = 0; i < array.Count; i++)
+                {
                     var val = array[i];
                     CreateFieldString(sb, val, IsLast && i == array.Count - 1);
                 }

@@ -7,8 +7,7 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
     /// <remarks>See the <a href="http://www.filehelpers.net/mustread">complete attributes list</a> for more information and examples of each one.</remarks>
     [AttributeUsage(AttributeTargets.Class)]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public abstract class TypedRecordAttribute
-        : Attribute
+    public abstract class TypedRecordAttribute : Attribute, ITypedRecordAttribute
     {
         #region "  Constructors  "
 

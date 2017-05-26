@@ -100,7 +100,7 @@ namespace Visyn.Windows.Io.FileHelper.Core
         /// </summary>
         public RecordOperations Operations { get; private set; }
 
-        private Dictionary<string, int> mMapFieldIndex;
+        private Dictionary<string, int> _mapFieldIndex;
 
         /// <summary>
         /// Is this record layout delimited
@@ -111,21 +111,22 @@ namespace Visyn.Windows.Io.FileHelper.Core
 
         #region "  Constructor "
 
-        private VisynRecordInfo() {}
+        internal VisynRecordInfo() {}
 
         /// <summary>
         /// Read the attributes of the class and create an array
         /// of how to process the file
         /// </summary>
         /// <param name="recordType">Class we are analysing</param>
-        private VisynRecordInfo(Type recordType)
+        /// <param name="typedRecordAttribute"></param>
+        internal VisynRecordInfo(Type recordType, ITypedRecordAttribute typedRecordAttribute = null)
         {
             SizeHint = 32;
-            RecordConditionSelector = String.Empty;
+            RecordConditionSelector = string.Empty;
             RecordCondition = RecordCondition.None;
             CommentAnyPlace = true;
             RecordType = recordType;
-            InitRecordFields();
+            InitRecordFields(typedRecordAttribute);
             Operations = new RecordOperations(this);
         }
 
@@ -133,13 +134,17 @@ namespace Visyn.Windows.Io.FileHelper.Core
         /// Create a list of fields we are extracting and set
         /// the size hint for record I/O
         /// </summary>
-        private void InitRecordFields()
+        private void InitRecordFields(ITypedRecordAttribute typedRecordAttribute)
         {
-            var recordAttribute = Attributes.GetFirstInherited<TypedRecordAttribute>(RecordType);
+            ITypedRecordAttribute recordAttribute = Attributes.GetFirstInherited<TypedRecordAttribute>(RecordType);
 
             if (recordAttribute == null)
             {
-                throw new BadUsageException(Messages.Messages.Errors.ClassWithOutRecordAttribute.ClassName(RecordType.Name).Text);
+                if (typedRecordAttribute == null)
+                {
+                    throw new BadUsageException(Messages.Messages.Errors.ClassWithOutRecordAttribute.ClassName(RecordType.Name).Text);
+                }
+                recordAttribute = typedRecordAttribute;
             }
 
             if (ReflectionHelper.GetDefaultConstructor(RecordType) == null) {
@@ -173,17 +178,14 @@ namespace Visyn.Windows.Io.FileHelper.Core
                     CommentAnyPlace = a.AnyPlace;
                 });
 
-            Attributes.WorkWithFirst<ConditionalRecordAttribute>(
-                RecordType,
+            Attributes.WorkWithFirst<ConditionalRecordAttribute>( RecordType, 
                 a => {
                     RecordCondition = a.Condition;
                     RecordConditionSelector = a.ConditionSelector;
 
-                    if (RecordCondition == RecordCondition.ExcludeIfMatchRegex ||
-                        RecordCondition == RecordCondition.IncludeIfMatchRegex) {
-                        RecordConditionRegEx = new Regex(RecordConditionSelector,
-                            RegexOptions.Compiled | RegexOptions.IgnoreCase |
-                            RegexOptions.ExplicitCapture);
+                    if (RecordCondition == RecordCondition.ExcludeIfMatchRegex || RecordCondition == RecordCondition.IncludeIfMatchRegex)
+                    {
+                        RecordConditionRegEx = new Regex(RecordConditionSelector, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
                     }
                 });
 
@@ -199,16 +201,13 @@ namespace Visyn.Windows.Io.FileHelper.Core
 
             Fields = CreateCoreFields(fields, recordAttribute);
 
-            if (FieldCount == 0) {
-                throw new BadUsageException(Messages.Messages.Errors.ClassWithOutFields
-                    .ClassName(RecordType.Name)
-                    .Text);
-            }
+            if (FieldCount == 0)
+                throw new BadUsageException(Messages.Messages.Errors.ClassWithOutFields.ClassName(RecordType.Name).Text);
 
-            if (recordAttribute is FixedLengthRecordAttribute) {
-                // Defines the initial size of the StringBuilder
+            if (recordAttribute is FixedLengthRecordAttribute)
+            {   // Defines the initial size of the StringBuilder
                 SizeHint = 0;
-                for (int i = 0; i < FieldCount; i++)
+                for (var i = 0; i < FieldCount; i++)
                     SizeHint += ((FixedLengthField) Fields[i]).FieldLength;
             }
         }
@@ -224,7 +223,7 @@ namespace Visyn.Windows.Io.FileHelper.Core
         /// <param name="fields">Complete list of fields in class</param>
         /// <param name="recordAttribute">Type of record, fixed or delimited</param>
         /// <returns>List of fields we are extracting</returns>
-        private static FieldBase[] CreateCoreFields(IList<FieldInfo> fields, TypedRecordAttribute recordAttribute)
+        private static FieldBase[] CreateCoreFields(IList<FieldInfo> fields, ITypedRecordAttribute recordAttribute)
         {
             var resFields = new List<FieldBase>();
 
@@ -387,19 +386,19 @@ namespace Visyn.Windows.Io.FileHelper.Core
         /// <returns>Index in field list</returns>
         public int GetFieldIndex(string fieldName)
         {
-            if (mMapFieldIndex == null) {
+            if (_mapFieldIndex == null) {
                 // Initialize field index map
-                mMapFieldIndex = new Dictionary<string, int>(FieldCount, StringComparer.Ordinal);
+                _mapFieldIndex = new Dictionary<string, int>(FieldCount, StringComparer.Ordinal);
                 for (int i = 0; i < FieldCount; i++)
                 {
-                    mMapFieldIndex.Add(Fields[i].FieldInfo.Name, i);
+                    _mapFieldIndex.Add(Fields[i].FieldInfo.Name, i);
                     if (Fields[i].FieldInfo.Name != Fields[i].FieldFriendlyName)
-                        mMapFieldIndex.Add(Fields[i].FieldFriendlyName, i);
+                        _mapFieldIndex.Add(Fields[i].FieldFriendlyName, i);
                 }
             }
 
             int res;
-            if (!mMapFieldIndex.TryGetValue(fieldName, out res)) {
+            if (!_mapFieldIndex.TryGetValue(fieldName, out res)) {
                 throw new BadUsageException(Messages.Messages.Errors.FieldNotFound
                     .FieldName(fieldName)
                     .ClassName(RecordType.Name)

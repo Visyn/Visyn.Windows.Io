@@ -43,7 +43,7 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
             else
                 return (T) attribs[0];
         }
-
+            
         /// <summary>
         /// Locate an attribute and perform an Action on it, do nothing if you don't find it
         /// </summary>
@@ -53,8 +53,7 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
         public static void WorkWithFirst<T>(this MemberInfo type, Action<T> action) where T : Attribute
         {
             var attribs = type.GetCustomAttributes(typeof (T), false);
-            if (attribs.Length == 0)
-                return;
+            if (attribs.Length == 0) return;
 
             action((T) attribs[0]);
         }

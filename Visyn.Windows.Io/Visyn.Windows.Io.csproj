@@ -43,6 +43,7 @@
     <Compile Include="Exceptions\BadUsageException.cs" />
     <Compile Include="Exceptions\ErrorInfo.cs" />
     <Compile Include="Exceptions\ErrorManager.cs" />
+    <Compile Include="FileHelper\Attributes\ITypedRecordAttribute.cs" />
     <Compile Include="FileHelper\Converters\ConverterExtensions.cs" />
     <Compile Include="FileHelper\Converters\ExceptionConverter.cs" />
     <Compile Include="Exceptions\FileHelpersException.cs" />

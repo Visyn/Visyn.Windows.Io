@@ -8,12 +8,10 @@ using Visyn.Windows.Io.FileHelper.Core;
 using Visyn.Windows.Io.FileHelper.Options;
 using Visyn.Windows.Io.FileHelper.Events;
 
-//using Container=FileHelpers.Container;
-
 namespace Visyn.Windows.Io.FileHelper
 {
     /// <summary>Abstract Base class for the engines of the library: 
-    /// <see cref="FileHelperEngine"/> and 
+    /// <see cref="VisynFileHelperEngine"/> and 
     /// <see cref="FileHelpers.FileHelperAsyncEngine{T}"/></summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public abstract class EngineBase
@@ -51,7 +49,7 @@ namespace Visyn.Windows.Io.FileHelper
                     .Text);
             }
 
-            mRecordType = recordType;
+            RecordType = recordType;
             RecordInfo = VisynRecordInfo.Resolve(recordType); // Container.Resolve<IRecordInfo>(recordType);
             Encoding = encoding;
 
@@ -64,7 +62,7 @@ namespace Visyn.Windows.Io.FileHelper
         /// <param name="ri">Record information</param>
         protected EngineBase(IRecordInfo ri)
         {
-            mRecordType = ri.RecordType;
+            RecordType = ri.RecordType;
             RecordInfo = ri;
 
             CreateRecordOptions();
@@ -74,31 +72,17 @@ namespace Visyn.Windows.Io.FileHelper
 
         #region "  LineNumber  "
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private int _lineNumber;
-
-
-
         /// <include file='FileHelperEngine.docs.xml' path='doc/LineNum/*'/>
-        public int LineNumber
-        {
-            get { return _lineNumber; }
-            protected set { _lineNumber = value; }
-        }
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        public int LineNumber { get; protected set; }
 
         #endregion
 
         #region "  TotalRecords  "
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private int _totalRecords;
-
         /// <include file='FileHelperEngine.docs.xml' path='doc/TotalRecords/*'/>
-        public int TotalRecords
-        {
-            get { return _totalRecords; }
-            protected set { _totalRecords = value; }
-        }
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        public int TotalRecords { get; protected set; }
 
         #endregion
 
@@ -127,33 +111,17 @@ namespace Visyn.Windows.Io.FileHelper
             return res.ToString();
         }
 
-        #region "  RecordType  "
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Type mRecordType;
 
         /// <include file='FileHelperEngine.docs.xml' path='doc/RecordType/*'/>
-        public Type RecordType => mRecordType;
-
-        #endregion
-
-        #region "  HeaderText  "
-
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        public Type RecordType { get; }
 
         /// <summary>The Read Header in the last Read operation. If any.</summary>
         public string HeaderText { get; set; }
 
-        #endregion
-
-        #region "  FooterText"
-
-
         /// <summary>The Read Footer in the last Read operation. If any.</summary>
         public string FooterText { get; set; }
-
-        #endregion
-
-        #region "  Encoding  "
+        
 
         /// <summary>
         /// The encoding to Read and Write the streams. 
@@ -162,7 +130,6 @@ namespace Visyn.Windows.Io.FileHelper
         /// <value>Default is the system's current ANSI code page.</value>
         public Encoding Encoding { get; set; }
 
-        #endregion
 
         #region "  NewLineForWrite  "
         /// <summary>
@@ -170,7 +137,8 @@ namespace Visyn.Windows.Io.FileHelper
         /// Default is the system's newline setting (System.Environment.NewLine).
         /// </summary>
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string mNewLineForWrite = Environment.NewLine;
+        [Obsolete("Backing field, do not use...")]
+        private string _newLineForWrite = Environment.NewLine;
 
         /// <summary>
         /// Newline string to be used when engine writes to file. 
@@ -179,12 +147,14 @@ namespace Visyn.Windows.Io.FileHelper
         /// <value>Default is the system's newline setting.</value>
         public string NewLineForWrite
         {
-            get { return mNewLineForWrite; }
+#pragma warning disable 618
+            get { return _newLineForWrite; }
             set
             {
                 if (string.IsNullOrEmpty(value)) throw new ArgumentNullException("NewLine string must not be null or empty");
-                mNewLineForWrite = value;
+                _newLineForWrite = value;
             }
+#pragma warning restore 618
         }
 
         #endregion
@@ -223,9 +193,9 @@ namespace Visyn.Windows.Io.FileHelper
         /// </summary>
         internal void ResetFields()
         {
-            _lineNumber = 0;
+            LineNumber = 0;
             _errorManager.ClearErrors();
-            _totalRecords = 0;
+            TotalRecords = 0;
         }
 
         #endregion

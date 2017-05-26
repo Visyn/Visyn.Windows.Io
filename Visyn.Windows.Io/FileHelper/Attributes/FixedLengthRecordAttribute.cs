@@ -6,7 +6,7 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
     /// <summary>Indicates that this class represents a fixed length record.</summary>
     /// <remarks>See the <a href="http://www.filehelpers.net/mustread">complete attributes list</a> for more information and examples of each one.</remarks>
     [AttributeUsage(AttributeTargets.Class)]
-    public sealed class FixedLengthRecordAttribute : TypedRecordAttribute
+    public sealed class FixedLengthRecordAttribute : TypedRecordAttribute, ITypedRecordAttribute
     {
         /// <summary>Indicates the behavior when variable length records are found.</summary>
         public FixedMode FixedMode { get; private set; }
