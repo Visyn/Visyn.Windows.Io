@@ -33,7 +33,7 @@ namespace Visyn.Windows.Io.FileHelper.Core
         private static readonly Dictionary<Type, VisynRecordInfo> _recordInfoCache = new Dictionary<Type, VisynRecordInfo>();
 
         internal static Dictionary<Type, ITypedRecordAttribute> KnownTypes { get; } =
-            new Dictionary<Type, ITypedRecordAttribute>() { { typeof(Statistics), new DelimitedRecordAttribute(",") } };
+            new Dictionary<Type, ITypedRecordAttribute>() { { typeof(Statistics), new DelimitedRecordAttribute(",") }, { typeof(double[]), new DelimitedRecordAttribute(",") } };
 
         /// <summary>
         /// Return the record information for the type
