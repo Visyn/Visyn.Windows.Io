@@ -90,13 +90,15 @@
     <Compile Include="FileHelper\Converters\EnumConverter.cs" />
     <Compile Include="FileHelper\Converters\GuidConverter.cs" />
     <Compile Include="FileHelper\Converters\IFieldConverter.cs" />
+    <Compile Include="FileHelper\Converters\IHasUnits.cs" />
     <Compile Include="FileHelper\Converters\Int16Converter.cs" />
     <Compile Include="FileHelper\Converters\Int32Converter.cs" />
     <Compile Include="FileHelper\Converters\Int64Converter.cs" />
     <Compile Include="FileHelper\Converters\PercentDoubleConverter.cs" />
     <Compile Include="FileHelper\Converters\SByteConverter.cs" />
     <Compile Include="FileHelper\Converters\SingleConverter.cs" />
-    <Compile Include="FileHelper\Converters\TimeSpanConverter.cs" />
+    <Compile Include="FileHelper\Converters\QuotedStringConverter.cs" />
+    <Compile Include="FileHelper\Converters\TimeSpanToSecondsConverter.cs" />
     <Compile Include="FileHelper\Converters\UInt16Converter.cs" />
     <Compile Include="FileHelper\Converters\UInt32Converter.cs" />
     <Compile Include="FileHelper\Converters\UInt64Converter.cs" />

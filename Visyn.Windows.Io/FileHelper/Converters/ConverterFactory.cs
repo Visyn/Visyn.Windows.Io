@@ -100,7 +100,7 @@ namespace Visyn.Windows.Io.FileHelper.Converters
             if (fieldType == typeof (Single)) return new SingleConverter();
 
             if (fieldType == typeof (DateTime)) return new DateTimeConverter();
-
+            if (fieldType == typeof(TimeSpan)) return new TimeSpanToSecondsConverter();
 
             if (fieldType == typeof (bool)) return new BooleanConverter();
 
