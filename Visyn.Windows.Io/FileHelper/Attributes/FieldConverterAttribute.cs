@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Visyn.Windows.Io.Exceptions;
 using Visyn.Windows.Io.FileHelper.Converters;
@@ -52,7 +54,8 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
 
             Type convType;
 
-            switch (converter) {
+            switch (converter)
+            {
                 case ConverterKind.Date:
                     convType = typeof (DateTimeConverter);
                     break;
@@ -95,7 +98,6 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
                 case ConverterKind.Double:
                     convType = typeof (DoubleConverter);
                     break;
-                    // Added by Shreyas Narasimhan 17 March 2010
                 case ConverterKind.PercentDouble:
                     convType = typeof (PercentDoubleConverter);
                     break;
@@ -114,10 +116,8 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
                     convType = typeof (GuidConverter);
                     break;
                 default:
-                    throw new BadUsageException("Converter '" + converter.ToString() +
-                                                "' not found, you must specify a valid converter.");
+                    throw new BadUsageException($"Converter '{ converter}' not found, you must specify a valid converter.");
             }
-            //mType = type;
 
             CreateConverter(convType, args);
         }
@@ -126,14 +126,14 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
         /// <param name="customConverter">The Type of your custom converter.</param>
         /// <param name="arg1">The first param passed directly to the Converter Constructor.</param>
         public FieldConverterAttribute(Type customConverter, string arg1)
-            : this(customConverter, new string[] {arg1}) {}
+            : this(customConverter, new object[] {arg1}) {}
 
         /// <summary>Indicates a custom <see cref="ConverterBase"/> implementation.</summary>
         /// <param name="customConverter">The Type of your custom converter.</param>
         /// <param name="arg1">The first param passed directly to the Converter Constructor.</param>
         /// <param name="arg2">The second param passed directly to the Converter Constructor.</param>
         public FieldConverterAttribute(Type customConverter, string arg1, string arg2)
-            : this(customConverter, new string[] {arg1, arg2}) {}
+            : this(customConverter, new object[] {arg1, arg2}) {}
 
         /// <summary>Indicates a custom <see cref="ConverterBase"/> implementation.</summary>
         /// <param name="customConverter">The Type of your custom converter.</param>
@@ -141,7 +141,7 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
         /// <param name="arg2">The second param passed directly to the Converter Constructor.</param>
         /// <param name="arg3">The third param passed directly to the Converter Constructor.</param>
         public FieldConverterAttribute(Type customConverter, string arg1, string arg2, string arg3)
-            : this(customConverter, new string[] {arg1, arg2, arg3}) {}
+            : this(customConverter, new object[] {arg1, arg2, arg3}) {}
 
         /// <summary>Indicates a custom <see cref="ConverterBase"/> implementation.</summary>
         /// <param name="customConverter">The Type of your custom converter.</param>
@@ -170,7 +170,7 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
         public ConverterKind Kind { get; private set; }
 
         #endregion
-
+         
         #region "  CreateConverter  "
 
         private void CreateConverter(Type convType, object[] args)
@@ -180,7 +180,7 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
                 var constructor = convType.GetConstructor(
                     BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic,
                     null,
-                    ArgsToTypes(args),
+                    ArgsToTypes(args).ToArray(),
                     null);
 
                 if (constructor == null)
@@ -211,30 +211,22 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
 
         #region "  ArgsToTypes  "
 
-        private static Type[] ArgsToTypes(object[] args)
+        private static IList<Type> ArgsToTypes(IEnumerable<object> args)
         {
             if (args == null)  throw new BadUsageException( "The args to the constructor can be null, if you do not want to pass anything into them.");
 
-            var res = new Type[args.Length];
-
-            for (int i = 0; i < args.Length; i++) {
-                if (args[i] == null)
-                    res[i] = typeof (object);
-                else
-                    res[i] = args[i].GetType();
-            }
-
-            return res;
+            return new List<Type>(args.Select(arg => arg?.GetType() ?? typeof(object)));
         }
 
-        private static string ArgsDesc(object[] args)
+        private static string ArgsDesc(IEnumerable<object> args)
         {
-            string res = DisplayType(args[0]);
+            return string.Join(", ",args.Select(DisplayType));
+            //var res = DisplayType(args[0]);
 
-            for (int i = 1; i < args.Length; i++)
-                res += ", " + DisplayType(args[i]);
+            //for (var i = 1; i < args.Length; i++)
+            //    res += ", " + DisplayType(args[i]);
 
-            return res;
+            //return res;
         }
 
         private static string DisplayType(object o) => o?.GetType().Name ?? "Object";
@@ -243,9 +235,9 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
 
         internal void ValidateTypes(FieldInfo fi)
         {
-            bool valid = false;
+            var valid = false;
 
-            Type fieldType = fi.FieldType;
+            var fieldType = fi.FieldType;
 
             if (fieldType.IsValueType &&
                 fieldType.IsGenericType &&
@@ -286,7 +278,7 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
             if (valid == false) {
                 throw new BadUsageException(
                     "The converter of the field: '" + fi.Name + "' is wrong. The field is of Type: " + fieldType.Name +
-                    " and the converter is for type: " + Kind.ToString());
+                    " and the converter is for type: " + Kind);
             }
         }
     }

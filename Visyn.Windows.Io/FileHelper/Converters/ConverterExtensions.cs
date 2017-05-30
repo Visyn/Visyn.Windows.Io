@@ -1,9 +1,9 @@
 ﻿using System;
-
 using Visyn.Windows.Io.Exceptions;
 
 namespace Visyn.Windows.Io.FileHelper.Converters
 {
+    [Obsolete("Not used",true)]
     public static class ConverterExtensions
     {
         /// <summary>

@@ -56,7 +56,6 @@ namespace Visyn.Windows.Io.FileHelper.Enums
         /// <para>Params: arg1 is the <b>decimal separator</b>, by default '.'</para>
         /// </summary>
         Double,
-        //Added by Shreyas Narasimhan (17 March 2010)
         /// <summary>
         /// <para>Convert from or to <b>Double</b> values. Understands Percent '%' symbol 
         /// and if present returns number /100 only while reading</para>

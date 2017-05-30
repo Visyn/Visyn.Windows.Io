@@ -1,5 +1,4 @@
-﻿using System;
-using Visyn.Core.Types;
+﻿using Visyn.Core.Types;
 
 namespace Visyn.Windows.Io.FileHelper.Converters
 {

@@ -16,7 +16,11 @@ namespace Visyn.Windows.Io.FileHelper.Converters
     /// </summary>
     public abstract class ConverterBase : IFieldConverter
     {
-        private static string _defaultDateTimeFormat = "ddMMyyyy";
+        /// <summary>
+        /// The default date time format string
+        /// Note: yyyy-MM-dd hh:mm:ss.FFF is recognized by Excel as a Date/Time
+        /// </summary>
+        private static string _defaultDateTimeFormat = "yyyy-MM-dd hh:mm:ss.FFF";
 
         /// <summary>
         /// If the class returns false the engines don't pass null values to the converter. 

@@ -1,5 +1,3 @@
-using System;
-
 namespace Visyn.Windows.Io.FileHelper.Converters
 {
     public class QuotedStringConverter : ConverterBase<string>

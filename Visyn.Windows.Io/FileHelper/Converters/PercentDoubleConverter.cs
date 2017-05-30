@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using Visyn.Windows.Io.Exceptions;
 
@@ -9,7 +8,6 @@ namespace Visyn.Windows.Io.FileHelper.Converters
     /// The main difference being that it can handle % sign at the end of the number
     /// It gives a value which is basically number / 100.
     /// </summary>
-    /// <remarks>Edited : Shreyas Narasimhan (17 March 2010) </remarks>
     internal sealed class PercentDoubleConverter : CultureConverter<double>
     {
         /// <summary>

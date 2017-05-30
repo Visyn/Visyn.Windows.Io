@@ -146,16 +146,14 @@ namespace Visyn.Windows.Io.FileHelper.Fields
         /// <param name="isLast">Indicates if we are processing last field</param>
         public override void CreateFieldString(StringBuilder sb, object fieldValue, bool isLast)
         {
-            var field = base.CreateFieldString(fieldValue);
-
-            var hasNewLine = mCompare.IndexOf(field, Environment.NewLine, CompareOptions.Ordinal) >= 0;
+            var text = base.CreateFieldString(fieldValue);
+            var hasNewLine = mCompare.IndexOf(text, Environment.NewLine, CompareOptions.Ordinal) >= 0;
 
             // If have a new line and this is not allowed.  We throw an exception
             if (hasNewLine &&
                 (QuoteMultiline == MultilineMode.AllowForRead ||
                  QuoteMultiline == MultilineMode.NotAllow)) {
-                throw new BadUsageException("One value for the field " + FieldInfo.Name +
-                                            " has a new line inside. To allow write this value you must add a FieldQuoted attribute with the multiline option in true.");
+                throw new BadUsageException($"One value for the field {FieldInfo.Name} has a new line inside. To allow write this value you must add a FieldQuoted attribute with the multiline option in true.");
             }
 
             // Add Quotes If:
@@ -167,10 +165,10 @@ namespace Visyn.Windows.Io.FileHelper.Fields
                 (QuoteMode == QuoteMode.AlwaysQuoted ||
                  QuoteMode == QuoteMode.OptionalForRead ||
                  ((QuoteMode == QuoteMode.OptionalForWrite || QuoteMode == QuoteMode.OptionalForBoth)
-                  && mCompare.IndexOf(field, Separator, CompareOptions.Ordinal) >= 0) || hasNewLine))
-                StringHelper.CreateQuotedString(sb, field, QuoteChar);
+                  && mCompare.IndexOf(text, Separator, CompareOptions.Ordinal) >= 0) || hasNewLine))
+                StringHelper.CreateQuotedString(sb, text, QuoteChar);
             else
-                sb.Append(field);
+                sb.Append(text);
 
             if (isLast == false) sb.Append(Separator);
         }
