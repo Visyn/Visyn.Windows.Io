@@ -128,7 +128,9 @@ namespace Visyn.Windows.Io.FileHelper
         /// Default is the system's current ANSI code page.
         /// </summary>
         /// <value>Default is the system's current ANSI code page.</value>
-        public Encoding Encoding { get; set; }
+        public Encoding Encoding
+        { get;
+            set; }
 
 
         #region "  NewLineForWrite  "
