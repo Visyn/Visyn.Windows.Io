@@ -164,6 +164,8 @@
     <Compile Include="FileHelper\TextWriterLines.cs" />
     <Compile Include="FileHelper\VisynFileHelper.cs" />
     <Compile Include="FileHelper\VisynFileHelperEngine.cs" />
+    <Compile Include="Files\FileExtensions.cs" />
+    <Compile Include="ConsoleOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -177,11 +179,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="FileHelper\Messages\Errors.msg" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
