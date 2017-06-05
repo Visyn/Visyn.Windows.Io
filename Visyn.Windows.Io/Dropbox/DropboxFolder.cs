@@ -21,7 +21,7 @@ namespace Visyn.Windows.Io.Dropbox
 
             var dropboxPath = System.IO.File.ReadAllText(jsonPath).Split('\"')[5].Replace(@"\\", @"\");
           
-            return dropboxPath;
+            return dropboxPath; 
         }
 
         public static string Directory(string relativeDirectory)
