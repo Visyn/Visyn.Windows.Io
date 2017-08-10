@@ -164,6 +164,7 @@
     <Compile Include="FileHelper\TextWriterLines.cs" />
     <Compile Include="FileHelper\VisynFileHelper.cs" />
     <Compile Include="FileHelper\VisynFileHelperEngine.cs" />
+    <Compile Include="Files\DirectoryExtensions.cs" />
     <Compile Include="Files\FileExtensions.cs" />
     <Compile Include="ConsoleOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -173,7 +174,7 @@
       <Project>{9c2a8976-44c2-47e1-a56a-d21c8794def0}</Project>
       <Name>Visyn.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Visyn.Public\Visyn.Public.csproj">
+    <ProjectReference Include="..\..\..\..\Visyn.Public\Lib\Visyn.Public.csproj">
       <Project>{aba4963b-56ba-4b42-8c2a-17be811e5f8e}</Project>
       <Name>Visyn.Public</Name>
     </ProjectReference>
