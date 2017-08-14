@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Visyn.Core.Mathematics;
+using Visyn.Mathematics;
 
 namespace Visyn.Windows.Io.FileHelper.Converters
 {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Visyn.Core.Collection;
+using Visyn.Collection;
 
 namespace Visyn.Windows.Io.FileHelper
 {

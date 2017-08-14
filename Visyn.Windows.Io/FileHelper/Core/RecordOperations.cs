@@ -133,21 +133,21 @@ namespace Visyn.Windows.Io.FileHelper.Core
             if (RecordInfo.RecordCondition == RecordCondition.None) return false;
             switch (RecordInfo.RecordCondition) {
                 case RecordCondition.ExcludeIfBegins:
-                    return line.BeginsWith(RecordInfo.RecordConditionSelector);
+                    return line.StartsWith(RecordInfo.RecordConditionSelector);
                 case RecordCondition.IncludeIfBegins:
-                    return !line.BeginsWith(RecordInfo.RecordConditionSelector);
+                    return !line.StartsWith(RecordInfo.RecordConditionSelector);
                 case RecordCondition.ExcludeIfContains:
-                    return ConditionHelper.Contains(line, RecordInfo.RecordConditionSelector);
+                    return line.Contains(RecordInfo.RecordConditionSelector);
                 case RecordCondition.IncludeIfContains:
-                    return !ConditionHelper.Contains(line, RecordInfo.RecordConditionSelector);
+                    return !line.Contains(RecordInfo.RecordConditionSelector);
                 case RecordCondition.ExcludeIfEnclosed:
-                    return ConditionHelper.Enclosed(line, RecordInfo.RecordConditionSelector);
+                    return line.Enclosed(RecordInfo.RecordConditionSelector);
                 case RecordCondition.IncludeIfEnclosed:
-                    return !ConditionHelper.Enclosed(line, RecordInfo.RecordConditionSelector);
+                    return !line.Enclosed(RecordInfo.RecordConditionSelector);
                 case RecordCondition.ExcludeIfEnds:
-                    return ConditionHelper.EndsWith(line, RecordInfo.RecordConditionSelector);
+                    return line.EndsWith(RecordInfo.RecordConditionSelector);
                 case RecordCondition.IncludeIfEnds:
-                    return !ConditionHelper.EndsWith(line, RecordInfo.RecordConditionSelector);
+                    return !line.EndsWith(RecordInfo.RecordConditionSelector);
                 case RecordCondition.ExcludeIfMatchRegex:
                     return RecordInfo.RecordConditionRegEx.IsMatch(line);
                 case RecordCondition.IncludeIfMatchRegex:
