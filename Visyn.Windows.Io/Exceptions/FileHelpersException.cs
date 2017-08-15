@@ -1,5 +1,5 @@
 using System;
-using Visyn.Public.Exceptions;
+using Visyn.Exceptions;
 
 namespace Visyn.Windows.Io.Exceptions
 {

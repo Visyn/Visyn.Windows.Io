@@ -31,10 +31,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dropbox\DropboxFolder.cs" />
@@ -87,7 +87,6 @@
     <Compile Include="FileHelper\Converters\DoubleConverter.cs" />
     <Compile Include="FileHelper\Converters\EnumConverter.cs" />
     <Compile Include="FileHelper\Converters\GuidConverter.cs" />
-    <Compile Include="FileHelper\Converters\IFieldConverter.cs" />
     <Compile Include="FileHelper\Converters\IHasUnits.cs" />
     <Compile Include="FileHelper\Converters\Int16Converter.cs" />
     <Compile Include="FileHelper\Converters\Int32Converter.cs" />
@@ -100,7 +99,6 @@
     <Compile Include="FileHelper\Converters\UInt16Converter.cs" />
     <Compile Include="FileHelper\Converters\UInt32Converter.cs" />
     <Compile Include="FileHelper\Converters\UInt64Converter.cs" />
-    <Compile Include="FileHelper\Converters\Vector3DConverter.cs" />
     <Compile Include="FileHelper\Core\Attributes.cs" />
     <Compile Include="FileHelper\Core\ConditionHelper.cs" />
     <Compile Include="FileHelper\Core\ExtractInfo.cs" />

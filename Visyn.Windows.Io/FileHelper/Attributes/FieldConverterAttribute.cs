@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Visyn.Types;
 using Visyn.Windows.Io.Exceptions;
 using Visyn.Windows.Io.FileHelper.Converters;
 using Visyn.Windows.Io.FileHelper.Enums;

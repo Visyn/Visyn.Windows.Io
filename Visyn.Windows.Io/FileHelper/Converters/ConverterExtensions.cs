@@ -1,4 +1,5 @@
 ﻿using System;
+using Visyn.Types;
 using Visyn.Windows.Io.Exceptions;
 
 namespace Visyn.Windows.Io.FileHelper.Converters

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using Visyn.Public.Io;
+using Visyn.Io;
 
 namespace Visyn.Windows.Io
 {
@@ -14,5 +14,10 @@ namespace Visyn.Windows.Io
         public void Write(Func<string> func) => Console.Write(func.Invoke());
 
         #endregion
+
+        public static BackgroundOutputDevice CreateBackgroundWriter()
+        {
+            return new BackgroundOutputDevice(new ConsoleOutput(), (s) => s, null);
+        }
     }
 }

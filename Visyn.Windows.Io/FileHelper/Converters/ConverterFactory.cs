@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Visyn.Types;
 using Visyn.Windows.Io.Exceptions;
 using Visyn.Windows.Io.FileHelper.Attributes;
 
