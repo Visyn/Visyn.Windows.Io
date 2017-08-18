@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using Visyn.Mathematics;
 using Visyn.Windows.Io.FileHelper.Core;
 using Visyn.Windows.Io.FileHelper.Enums;
 using Visyn.Windows.Io.Exceptions;
@@ -52,7 +53,9 @@ namespace Visyn.Windows.Io.FileHelper.Fields
             FieldLength = length;
 
             if (align != null) Align = align;
-            else  if (TypeHelper.IsNumericType(fi.FieldType)) Align = new FieldAlignAttribute(AlignMode.Right, ' ');
+            else if (fi.FieldType.IsNumeric()) Align = new FieldAlignAttribute(AlignMode.Right, ' ');
+            //else if (fi.FieldType.IsNumeric()) Align = new FieldAlignAttribute(AlignMode.Right, ' ');
+
         }
 
         #endregion
