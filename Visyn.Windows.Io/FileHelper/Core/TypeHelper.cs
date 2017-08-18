@@ -12,7 +12,7 @@ namespace Visyn.Windows.Io.FileHelper.Core
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        [Obsolete("Use IsNumeric")]
+        [Obsolete("Use Visyn.Mathematics.IsNumericType.IsNumeric",true)]
         public static bool IsNumericType(Type type)
         {
             return type == typeof (Int16) ||
