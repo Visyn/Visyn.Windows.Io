@@ -163,6 +163,7 @@
     <Compile Include="Files\FileExtensions.cs" />
     <Compile Include="ConsoleOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Threads\CircularBufferLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Visyn.Collection\Lib\Visyn.Collection.csproj">

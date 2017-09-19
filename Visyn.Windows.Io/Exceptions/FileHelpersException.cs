@@ -23,6 +23,6 @@ namespace Visyn.Windows.Io.Exceptions
         /// <param name="line">The line number where the problem was found</param>
         /// <param name="column">The column number where the problem was found</param>
         public FileHelpersException(int line, int column, string message)
-            : base("Line: " + line.ToString() + " Column: " + column.ToString() + ". " + message) {}
+            : base($"Line: {line} Column: {column}. {message}") {}
     }
 }

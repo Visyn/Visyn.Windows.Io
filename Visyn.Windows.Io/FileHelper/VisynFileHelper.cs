@@ -410,7 +410,6 @@ namespace Visyn.Windows.Io.FileHelper
 
         #region "  WriteString  "
 
-
         public override string WriteString(IEnumerable<T> records) => WriteString(records, int.MaxValue);
 
         public override string WriteString(IEnumerable<T> records, int maxRecords)
