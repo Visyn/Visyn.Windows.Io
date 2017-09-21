@@ -19,10 +19,11 @@ namespace Visyn.Windows.Io.FileHelper.Converters
     {
         /// <summary>
         /// The default date time format string
-        /// Note: yyyy-MM-dd hh:mm:ss.FFF is recognized by Excel as a Date/Time
+        /// Note: yyyy-MM-dd HH:mm:ss.FFF is recognized by Excel as a Date/Time
         /// </summary>
-        private static string _defaultDateTimeFormat = "yyyy-MM-dd hh:mm:ss.FFF";
+        private static string _defaultDateTimeFormat = "yyyy-MM-dd HH:mm:ss.FFF";
 
+        private static string _defaultDateFormat = "yyyy-MM-dd";
         /// <summary>
         /// If the class returns false the engines don't pass null values to the converter. 
         /// If true the engines pass all the values to the converter.
@@ -40,7 +41,6 @@ namespace Visyn.Windows.Io.FileHelper.Converters
             get { return _defaultDateTimeFormat; }
             set
             {
-                
                 try
                 {   // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
                     DateTime.Now.ToString(value);
@@ -50,6 +50,25 @@ namespace Visyn.Windows.Io.FileHelper.Converters
                     throw new BadUsageException("The format: '" + value + " is invalid for the DateTime Converter.");
                 }
                 _defaultDateTimeFormat = value;
+            }
+        }
+
+
+
+        public static string DefaultDateFormat
+        {
+            get { return _defaultDateFormat; }
+            set
+            {
+                try
+                {   // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+                    DateTime.Now.ToString(value);
+                }
+                catch
+                {
+                    throw new BadUsageException($"The format: '{value} is invalid for the {nameof(DateConverter)}.");
+                }
+                _defaultDateFormat = value;
             }
         }
 

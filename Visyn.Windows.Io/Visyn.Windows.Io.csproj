@@ -43,6 +43,7 @@
     <Compile Include="Exceptions\ErrorManager.cs" />
     <Compile Include="FileHelper\Attributes\ITypedRecordAttribute.cs" />
     <Compile Include="FileHelper\Converters\ConverterExtensions.cs" />
+    <Compile Include="FileHelper\Converters\DateConverter.cs" />
     <Compile Include="FileHelper\Converters\ExceptionConverter.cs" />
     <Compile Include="Exceptions\FileHelpersException.cs" />
     <Compile Include="Exceptions\NullValueNotFoundException.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="FileHelper\Converters\SByteConverter.cs" />
     <Compile Include="FileHelper\Converters\SingleConverter.cs" />
     <Compile Include="FileHelper\Converters\QuotedStringConverter.cs" />
+    <Compile Include="FileHelper\Converters\TimeSpanToHoursMinutesSecondsConverter.cs" />
     <Compile Include="FileHelper\Converters\TimeSpanToSecondsConverter.cs" />
     <Compile Include="FileHelper\Converters\UInt16Converter.cs" />
     <Compile Include="FileHelper\Converters\UInt32Converter.cs" />
@@ -166,14 +168,6 @@
     <Compile Include="Threads\CircularBufferLogger.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Visyn.Collection\Lib\Visyn.Collection.csproj">
-      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
-      <Name>Visyn.Collection</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Visyn.Mathematics\Lib\Visyn.Mathematics.csproj">
-      <Project>{72010055-3d6e-4da8-acee-aef0e78e46a7}</Project>
-      <Name>Visyn.Mathematics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Visyn.Public\Lib\Visyn.Public.csproj">
       <Project>{aba4963b-56ba-4b42-8c2a-17be811e5f8e}</Project>
       <Name>Visyn.Public</Name>
