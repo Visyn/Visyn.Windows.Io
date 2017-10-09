@@ -1,4 +1,5 @@
 ﻿using System;
+using Visyn.Serialize;
 
 namespace Visyn.Windows.Io.FileHelper.Attributes
 {

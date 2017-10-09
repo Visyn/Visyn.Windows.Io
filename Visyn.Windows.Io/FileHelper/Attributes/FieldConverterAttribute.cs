@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Visyn.Exceptions;
+using Visyn.Serialize;
+using Visyn.Serialize.Converters;
 using Visyn.Types;
-using Visyn.Windows.Io.Exceptions;
-using Visyn.Windows.Io.FileHelper.Converters;
-using Visyn.Windows.Io.FileHelper.Enums;
 
+/*
 namespace Visyn.Windows.Io.FileHelper.Attributes
 {
     /// <summary>Indicates the <see cref="ConverterKind"/> used for read/write operations.</summary>
@@ -283,4 +284,5 @@ namespace Visyn.Windows.Io.FileHelper.Attributes
             }
         }
     }
-}
+    
+}*/

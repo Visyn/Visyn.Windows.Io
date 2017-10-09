@@ -2,6 +2,8 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Visyn.Exceptions;
+using Visyn.Serialize;
 using Visyn.Windows.Io.Exceptions;
 using Visyn.Windows.Io.FileHelper.Core;
 
@@ -12,12 +14,6 @@ namespace Visyn.Windows.Io.FileHelper
     /// </summary>
     public static class StringHelper
     {
-        /// <summary>
-        /// New line variable
-        /// </summary>
-        [Obsolete("Use Environment.NewLine",true)]
-        internal static readonly string NewLine = Environment.NewLine;
-
         #region "  ExtractQuotedString  "
 
         /// <summary>

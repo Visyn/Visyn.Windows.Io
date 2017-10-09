@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Visyn.Mathematics;
+using Visyn.Serialize;
 using Visyn.Windows.Io.FileHelper.Attributes;
 
 namespace Visyn.Windows.Io.FileHelper.Core

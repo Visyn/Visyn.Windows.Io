@@ -4,6 +4,8 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Visyn.Exceptions;
+using Visyn.Serialize;
 using Visyn.Windows.Io.Exceptions;
 using Visyn.Windows.Io.FileHelper.Enums;
 
@@ -37,7 +39,7 @@ namespace Visyn.Windows.Io.FileHelper.Core
         /// <param name="line">Line of data to process</param>
         /// <param name="values">Values to assign to object</param>
         /// <returns>Object created or null if record skipped</returns>
-        /// <exception cref="Exceptions.ConvertException">Could not convert data from input file</exception>
+        /// <exception cref="ConvertException">Could not convert data from input file</exception>
         public object StringToRecord(LineInfo line, object[] values)
         {
             if (MustIgnoreLine(line.mLineStr)) return null;
@@ -53,7 +55,7 @@ namespace Visyn.Windows.Io.FileHelper.Core
                 for (var i = 0; i < RecordInfo.FieldCount; i++) {
                     if (values[i] != null &&
                         !RecordInfo.Fields[i].FieldTypeInternal.IsInstanceOfType(values[i])) {
-                        throw new Exceptions.ConvertException(null,
+                        throw new ConvertException(null,
                             RecordInfo.Fields[i].FieldTypeInternal,
                             RecordInfo.Fields[i].FieldInfo.Name,
                             line.mReader.LineNumber,

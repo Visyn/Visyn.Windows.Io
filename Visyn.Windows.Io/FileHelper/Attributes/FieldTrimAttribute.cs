@@ -1,5 +1,5 @@
 using System;
-using Visyn.Windows.Io.FileHelper.Core;
+using Visyn.Serialize;
 using Visyn.Windows.Io.FileHelper.Enums;
 
 namespace Visyn.Windows.Io.FileHelper.Attributes
