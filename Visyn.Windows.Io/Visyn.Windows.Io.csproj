@@ -34,9 +34,15 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsBase">
+      <HintPath>..\..\packages\WindowsBase.4.6.1055.0\lib\WindowsBase.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assemblies\AssemblyExtensions.cs" />
+    <Compile Include="Assemblies\AssemblyInfoAttributes.cs" />
+    <Compile Include="Assemblies\Directories.cs" />
     <Compile Include="Dropbox\DropboxFolder.cs" />
     <Compile Include="Exceptions\ErrorInfo.cs" />
     <Compile Include="Exceptions\ErrorManager.cs" />
@@ -129,6 +135,14 @@
     <ProjectReference Include="..\..\..\..\Visyn.Public\Lib\Visyn.Public.csproj">
       <Project>{aba4963b-56ba-4b42-8c2a-17be811e5f8e}</Project>
       <Name>Visyn.Public</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Visyn.Collection\Lib\Visyn.Collection.csproj">
+      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
+      <Name>Visyn.Collection</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Visyn.Mathematics\Lib\Visyn.Mathematics.csproj">
+      <Project>{72010055-3d6e-4da8-acee-aef0e78e46a7}</Project>
+      <Name>Visyn.Mathematics</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

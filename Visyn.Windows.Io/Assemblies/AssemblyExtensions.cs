@@ -1,4 +1,4 @@
-#region Copyright (c) 2015-2017 Visyn
+﻿#region Copyright (c) 2015-2017 Visyn
 // The MIT License(MIT)
 // 
 // Copyright(c) 2015-2017 Visyn
@@ -23,25 +23,38 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
+using System.Reflection;
+using System.Threading;
 
-namespace Visyn.Windows.Io.FileHelper.Attributes
+namespace Visyn.Windows.Io.Assemblies
 {
-    /// <summary>Indicates a different caption for this field, which overrides FieldFriendlyName when calling GetFileHeader. </summary>
-    /// <remarks>See the <a href="http://www.filehelpers.net/mustread">complete attributes list</a> for more information and examples of each one.</remarks>
-
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class FieldCaptionAttribute : Attribute
+    public static class AssemblyExtensions
     {
-        /// <summary>
-        /// Gets the caption for this field
-        /// </summary>
-        public string Caption { get; private set; }
-
-        /// <summary>Indicates a different caption for this field. </summary>
-        /// <param name="caption">The string used for the field in the header row.</param>
-        public FieldCaptionAttribute(string caption)
+        private static readonly Lazy<ConcurrentDictionary<string, Assembly>> _assembliesByName = new Lazy<ConcurrentDictionary<string, Assembly>>(() =>
         {
-            this.Caption = caption;
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var dictionary = new ConcurrentDictionary<string, Assembly>();
+
+            foreach(var assembly in assemblies)
+            {
+                dictionary.GetOrAdd(assembly.GetName().Name, assembly);
+            }
+            return dictionary;
+        },LazyThreadSafetyMode.ExecutionAndPublication );
+
+        public static Assembly GetAssemblyByName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return null;
+            Assembly assembly = null;
+            if(_assembliesByName.Value.TryGetValue(name, out assembly))
+                return assembly;
+            return null;
+        }
+
+        public static string Name(this Assembly assembly)
+        {
+            return assembly != null ? assembly.GetName().Name : "";
         }
     }
 }
