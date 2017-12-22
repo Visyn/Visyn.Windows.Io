@@ -33,6 +33,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
@@ -44,6 +45,11 @@
     <Compile Include="Assemblies\AssemblyExtensions.cs" />
     <Compile Include="Assemblies\AssemblyInfoAttributes.cs" />
     <Compile Include="Assemblies\Directories.cs" />
+    <Compile Include="Device\DeviceAddedRemovedEventArgs.cs" />
+    <Compile Include="Device\DeviceWatcherBase.cs" />
+    <Compile Include="Device\ManagementObjectExtensions.cs" />
+    <Compile Include="Device\WmiDeviceWatcher.cs" />
+    <Compile Include="Device\SerialPortWatcher.cs" />
     <Compile Include="Dropbox\DropboxFolder.cs" />
     <Compile Include="Exceptions\ErrorInfo.cs" />
     <Compile Include="Exceptions\ErrorManager.cs" />
