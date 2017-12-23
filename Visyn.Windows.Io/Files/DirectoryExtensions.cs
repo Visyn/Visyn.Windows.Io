@@ -22,6 +22,7 @@
 // SOFTWARE.
 #endregion
 
+using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -37,11 +38,13 @@ namespace Visyn.Windows.Io.Files
 
         public static IEnumerable<FileInfo> FindFiles(this DirectoryInfo directory, string fileFilter = "*.txt")
         {
+            if (fileFilter == null) throw new NullReferenceException($"{nameof(FindFiles)}({nameof(fileFilter)}) can not be null!");
             if (directory == null) yield break;
 
             var files = Directory.GetFiles(directory.FullName, fileFilter);
             foreach (var fi in directory.EnumerateFiles())
             {
+                if (fi == null) continue;
                 if (files.Contains(fi.FullName))
                     yield return fi;
             }

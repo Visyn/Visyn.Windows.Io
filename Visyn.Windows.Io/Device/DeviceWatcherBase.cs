@@ -25,59 +25,83 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Management;
 using System.Threading;
-using System.Windows.Threading;
+using Visyn.Device;
+using Visyn.Exceptions;
 using Visyn.Io;
+using Visyn.JetBrains;
 using Visyn.Threads;
 
 namespace Visyn.Windows.Io.Device
 {
-    public abstract class DeviceWatcherBase<T> : IDisposable
+    public abstract class DeviceWatcherBase<T> : IDisposable, IExceptionHandler
     {
+        public const string Win32DeviceChangeEventQueryString = "select * from Win32_DeviceChangeEvent";
+        public string EventQueryString { get; }
+        [NotNull]
         public ObservableCollection<T> Devices { get; }
 
         public EventHandler<DeviceAddedRemovedEventArgs> DeviceAdded;
         public EventHandler<DeviceAddedRemovedEventArgs> DeviceRemoved;
-        public int Count => Devices.Count;
-        protected IOutputDevice _Output;
-        protected DeviceWatcherBase(IInvoker dispatcher, IOutputDevice output)
-        {
-            _dispatcher = dispatcher;
-            _Output = output;
-            Devices = new ObservableCollection<T>();
 
-            _watcher = new ManagementEventWatcher(new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent"));
+        // ReSharper disable once PossibleNullReferenceException
+        public int Count => Devices.Count;
+        protected IOutputDevice Output;
+
+        protected DeviceWatcherBase(IInvoker invoker, IOutputDevice output)
+            : this(Win32DeviceChangeEventQueryString, invoker, output) { }
+
+        protected DeviceWatcherBase(string eventQueryString, IInvoker invoker, IOutputDevice output)
+        {
+            EventQueryString = eventQueryString;
+            if (invoker == null)
+                throw new NullReferenceException($"{nameof(DeviceWatcherBase<T>)} {nameof(invoker)} can not be null!");
+            Invoker = invoker;
+            Output = output;
+            Devices = new ObservableCollection<T>();
+            var query = new WqlEventQuery(EventQueryString);
+            _watcher = new ManagementEventWatcher(query);
+            
             _watcher.EventArrived += (sender, eventArgs) => SearchForDevices(eventArgs);
             _watcher.Start();
+            Debug.Assert(_watcher.Query.QueryString == EventQueryString);
         }
 
         protected abstract void SearchForDevices();
 		
         protected virtual void SearchForDevices(EventArrivedEventArgs args)
         {
-            var eventCreationTime = args.TimeCreated();
+            try
+            {
+                var eventCreationTime = args.TimeCreated();
 
-            // Delay/event skipping significantly reduces number of polls (~10x)
-            if (eventCreationTime < _lastCreateTime + TimeSpan.FromMilliseconds(_delayMs))
-            {
-                _skipped++;
+                // Delay/event skipping significantly reduces number of polls (~10x)
+                if (eventCreationTime < _lastCreateTime + TimeSpan.FromMilliseconds(_delayMs))
+                {
+                    _skipped++;
+                }
+                else
+                {
+                    _lastCreateTime = eventCreationTime;
+                    Thread.Sleep(_delayMs);
+                    eventCount++;
+                    SearchForDevices();
+                }
             }
-            else
+            catch (Exception e)
             {
-                _lastCreateTime = eventCreationTime;
-                Thread.Sleep(_delayMs);
-                eventCount++;
-                SearchForDevices();
+                HandleException(this, e);
             }
         }
 
 
         protected virtual void RemoveDevices(IList<T> removed)
         {
-            if (removed.Count > 0)
+            if (removed?.Count > 0)
             {
-                _dispatcher.Invoke(() =>
+                Invoker.Invoke(() =>
                 {
                     foreach (var device in removed)
                     {
@@ -96,9 +120,9 @@ namespace Visyn.Windows.Io.Device
 
         protected virtual void AddDevices(IList<T> devicesToAdd)
         {
-            if (devicesToAdd.Count > 0)
+            if (devicesToAdd?.Count > 0)
             {
-                _dispatcher.Invoke(() =>
+                Invoker.Invoke(() =>
                 {
                     foreach (var device in devicesToAdd)
                     {
@@ -139,6 +163,22 @@ namespace Visyn.Windows.Io.Device
         private DateTime _lastCreateTime = DateTime.MinValue;
         private int _delayMs = 200;
         private readonly ManagementEventWatcher _watcher;
-        protected readonly IInvoker _dispatcher;
+        [NotNull]
+        protected readonly IInvoker Invoker;
+
+        #region Implementation of IExceptionHandler
+
+        public IExceptionHandler ExceptionHandler { get; set; }
+        public bool HandleException(object sender, Exception exception)
+        {
+            if(ExceptionHandler?.HandleException(sender,exception) == true)
+                return true;
+            if (sender == null) sender = this;
+            Output?.WriteLine($"{sender.GetType().Name} Exception: {exception.Message}");
+            return true;
+        }
+        
+
+        #endregion
     }
 }

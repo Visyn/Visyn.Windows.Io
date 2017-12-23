@@ -28,8 +28,8 @@ using System.Linq;
 using System.Management;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 using Visyn.Io;
+using Visyn.JetBrains;
 using Visyn.Threads;
 
 namespace Visyn.Windows.Io.Device
@@ -39,15 +39,17 @@ namespace Visyn.Windows.Io.Device
     /// </summary>
     public sealed class WmiDeviceWatcher : DeviceWatcherBase<string>
     {
-        private IEnumerable<string> _deviceInstancePaths;
+        [NotNull]
+        private readonly IEnumerable<string> _deviceInstancePaths;
         public WmiDeviceWatcher(IEnumerable<string> deviceInstancePaths, IOutputDevice output) 
-            : this(deviceInstancePaths,new WpfInvoker(Dispatcher.CurrentDispatcher),output)
+            : this(deviceInstancePaths,new WpfInvoker(System.Windows.Threading.Dispatcher.CurrentDispatcher),output)
         {
         }
 
-        public WmiDeviceWatcher(IEnumerable<string> deviceInstancePaths ,IInvoker dispatcher, IOutputDevice output) 
-            : base(dispatcher, output)
+        public WmiDeviceWatcher(IEnumerable<string> deviceInstancePaths ,IInvoker invoker, IOutputDevice output) 
+            : base(invoker, output)
         {
+            if (deviceInstancePaths == null) throw new NullReferenceException($"{nameof(deviceInstancePaths)} can not be null!");
             _deviceInstancePaths = deviceInstancePaths;
             var task = new Task(SearchForDevices, TaskCreationOptions.LongRunning);
             task.Start();
@@ -80,12 +82,12 @@ namespace Visyn.Windows.Io.Device
                             if (!com.IsMatch(deviceName)) continue;
 
                             var comPort = com.Match(deviceName).Groups[1].ToString();
-                            var wmiDeviceId = deviceId;
+                            
                             devices.Add(comPort, deviceInstancePath);
                         }
                         catch (Exception ex)
                         {
-      //                      _output?.WriteLine($"Finder.SearchForSensors {ex}");
+                            Output?.WriteLine($"{nameof(WmiDeviceWatcher)}.{nameof(SearchForDevices)} Exception: {ex.Message}");
                         }
                         finally
                         {
@@ -96,7 +98,7 @@ namespace Visyn.Windows.Io.Device
                 }
                 catch (Exception ex)
                 {
-    //                _output?.WriteLine($"Finder.SearchForSensors {ex}");
+                    Output?.WriteLine($"{nameof(WmiDeviceWatcher)}.{nameof(SearchForDevices)} Exception: {ex.Message}");
                 }
             }
             // Search for items to remove

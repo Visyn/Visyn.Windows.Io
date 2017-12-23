@@ -45,7 +45,6 @@
     <Compile Include="Assemblies\AssemblyExtensions.cs" />
     <Compile Include="Assemblies\AssemblyInfoAttributes.cs" />
     <Compile Include="Assemblies\Directories.cs" />
-    <Compile Include="Device\DeviceAddedRemovedEventArgs.cs" />
     <Compile Include="Device\DeviceWatcherBase.cs" />
     <Compile Include="Device\ManagementObjectExtensions.cs" />
     <Compile Include="Device\WmiDeviceWatcher.cs" />
@@ -137,6 +136,7 @@
     <Compile Include="ConsoleOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threads\CircularBufferLogger.cs" />
+    <Compile Include="Threads\WinformsInvoker.cs" />
     <Compile Include="Xml\XmlIO.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -26,8 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
-using System.Management;
-using System.Windows.Threading;
 using Visyn.Io;
 using Visyn.Threads;
 
@@ -38,11 +36,11 @@ namespace Visyn.Windows.Io.Device
     /// </summary>
     public sealed class SerialPortWatcher : DeviceWatcherBase<string>
     {
-        public SerialPortWatcher(IOutputDevice output) : this(new WpfInvoker(Dispatcher.CurrentDispatcher), output)
+        public SerialPortWatcher(IOutputDevice output) : this(new WpfInvoker(System.Windows.Threading.Dispatcher.CurrentDispatcher), output)
         {
         }
 
-        public SerialPortWatcher(IInvoker dispatcher, IOutputDevice output) : base(dispatcher, output)
+        public SerialPortWatcher(IInvoker invoker, IOutputDevice output) : base(invoker, output)
         {
             _comparer = new ComNameComparer();
             foreach (var port in SerialPort.GetPortNames().OrderBy(s => s, _comparer))
