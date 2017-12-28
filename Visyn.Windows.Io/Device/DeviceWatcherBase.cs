@@ -156,7 +156,7 @@ namespace Visyn.Windows.Io.Device
         }
 
         #endregion
-        private bool triggered = false;
+
         private int _skipped;
         private int eventCount;
 
