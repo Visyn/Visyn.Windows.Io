@@ -48,6 +48,8 @@
     <Compile Include="Assemblies\AssemblyExtensions.cs" />
     <Compile Include="Assemblies\AssemblyInfoAttributes.cs" />
     <Compile Include="Assemblies\Directories.cs" />
+    <Compile Include="Device\ComPort.cs" />
+    <Compile Include="Device\ComPortExtensions.cs" />
     <Compile Include="Device\DeviceWatcherBase.cs" />
     <Compile Include="Device\ManagementObjectExtensions.cs" />
     <Compile Include="Device\WmiDeviceWatcher.cs" />

@@ -22,10 +22,8 @@
 // SOFTWARE.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO.Ports;
 using System.Linq;
+using Visyn.Collection;
 using Visyn.Io;
 using Visyn.Threads;
 
@@ -34,27 +32,30 @@ namespace Visyn.Windows.Io.Device
     /// <summary>
     /// Make sure you create this watcher in the UI thread if you are using the com port list in the UI
     /// </summary>
-    public sealed class SerialPortWatcher : DeviceWatcherBase<string>
+    public sealed class SerialPortWatcher : DeviceWatcherBase<ComPort>
     {
-        public SerialPortWatcher(IOutputDevice output) : this(new WpfInvoker(System.Windows.Threading.Dispatcher.CurrentDispatcher), output)
+
+
+        public SerialPortWatcher(IOutputDevice output) 
+            : this(new WpfInvoker(System.Windows.Threading.Dispatcher.CurrentDispatcher), output)
         {
         }
 
-        public SerialPortWatcher(IInvoker invoker, IOutputDevice output) : base(invoker, output)
+        public SerialPortWatcher(IInvoker invoker, IOutputDevice output) 
+            : base(invoker, output)
         {
-            _comparer = new ComNameComparer();
-            foreach (var port in SerialPort.GetPortNames().OrderBy(s => s, _comparer))
-                Devices.Add(port);
+            Devices.AddRange(ComPort.GetComPorts());
         }
 
-        public IComparer<string> ComNameComparer { get; set; }
 
         protected override void SearchForDevices()
         {
-            IEnumerable<string> ports = SerialPort.GetPortNames().OrderBy(s => s);
+            var ports = ComPort.GetComPorts();
 
             // Search for items to remove
-            RemoveDevices(Devices.Where(comPort => !ports.Contains(comPort)).ToList());
+            var remove = Devices.Where(comPort => !ports.Contains(comPort)).ToList();
+
+            RemoveDevices(remove);
 
             // Search for items to add
             AddDevices(ports.Where(port => !Devices.Contains(port)).ToList());
@@ -63,11 +64,11 @@ namespace Visyn.Windows.Io.Device
 
         #region Overrides of DeviceWatcherBase<string>
 
-        protected override void AddDevice(string device)
+        protected override void AddDevice(ComPort device)
         {
             for (var j = 0; j <= Devices.Count; j++)
             {
-                if (j < Devices.Count && _comparer.Compare(device, Devices[j]) >= 0) continue;
+                if (j < Devices.Count && ComPortExtensions.ComNameComparer.Compare(device.PortName, Devices[j].PortName) >= 0) continue;
                 Devices.Insert(j, device);
                 break;
             }
@@ -84,19 +85,8 @@ namespace Visyn.Windows.Io.Device
 
         #endregion
 
-        private readonly ComNameComparer _comparer;
+//        private readonly ComNameComparer _comparer;
     }
 
-    class ComNameComparer : IComparer<string>
-    {
-#region Implementation of IComparer<in string>
 
-        public int Compare(string a, string b)
-        {
-            return (a.Length != b.Length) ? a.Length.CompareTo(b.Length) :
-                string.Compare(a, b, StringComparison.InvariantCulture);
-        }
-
-#endregion
-    }
 }
