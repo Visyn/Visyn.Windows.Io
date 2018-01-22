@@ -141,6 +141,7 @@
     <Compile Include="ConsoleOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threads\CircularBufferLogger.cs" />
+    <Compile Include="Threads\ThreadExtensionscs.cs" />
     <Compile Include="Threads\WinformsInvoker.cs" />
     <Compile Include="Xml\XmlIO.cs" />
   </ItemGroup>

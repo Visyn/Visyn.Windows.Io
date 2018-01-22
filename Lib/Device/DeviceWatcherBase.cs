@@ -43,8 +43,8 @@ namespace Visyn.Windows.Io.Device
         [NotNull]
         public ObservableCollection<T> Devices { get; }
 
-        public EventHandler<DeviceAddedRemovedEventArgs> DeviceAdded;
-        public EventHandler<DeviceAddedRemovedEventArgs> DeviceRemoved;
+        public EventHandler<DeviceAddedRemovedEventArgs<T>> DeviceAdded;
+        public EventHandler<DeviceAddedRemovedEventArgs<T>> DeviceRemoved;
 
         // ReSharper disable once PossibleNullReferenceException
         public int Count => Devices.Count;
@@ -113,8 +113,8 @@ namespace Visyn.Windows.Io.Device
 
         protected virtual void RemoveDevice(T device)
         {
-            DeviceRemoved?.Invoke(this, new DeviceAddedRemovedEventArgs(device.ToString(), false));
             Devices.Remove(device);
+            DeviceRemoved?.Invoke(this, new DeviceAddedRemovedEventArgs<T>(device.ToString(), false, device));
         }
 
 
@@ -134,8 +134,8 @@ namespace Visyn.Windows.Io.Device
 
         protected virtual void AddDevice(T device)
         {
-            DeviceAdded?.Invoke(this, new DeviceAddedRemovedEventArgs(device.ToString(), true));
             Devices.Add(device);
+            DeviceAdded?.Invoke(this, new DeviceAddedRemovedEventArgs<T>(device.ToString(), true,device));
         }
 
         #region IDisposable
