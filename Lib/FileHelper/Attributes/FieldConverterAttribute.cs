@@ -22,15 +22,6 @@
 // SOFTWARE.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Visyn.Exceptions;
-using Visyn.Serialize;
-using Visyn.Serialize.Converters;
-using Visyn.Types;
-
 /*
 namespace Visyn.Windows.Io.FileHelper.Attributes
 {

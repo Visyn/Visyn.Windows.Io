@@ -28,7 +28,6 @@ using System.Linq;
 using System.Text;
 using Visyn.Exceptions;
 using Visyn.Serialize;
-using Visyn.Windows.Io.Exceptions;
 using Visyn.Windows.Io.FileHelper.Core;
 
 namespace Visyn.Windows.Io.FileHelper

@@ -23,7 +23,6 @@
 #endregion
 
 using System.Linq;
-using Visyn.Collection;
 using Visyn.Io;
 using Visyn.Threads;
 
@@ -44,7 +43,10 @@ namespace Visyn.Windows.Io.Device
         public SerialPortWatcher(IInvoker invoker, IOutputDevice output) 
             : base(invoker, output)
         {
-            Devices.AddRange(ComPort.GetComPorts());
+            foreach (var port in ComPort.GetComPorts())
+            {
+                Devices.Add(port);
+            }
         }
 
 

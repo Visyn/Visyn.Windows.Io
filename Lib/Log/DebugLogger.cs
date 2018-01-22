@@ -1,4 +1,4 @@
-#region Copyright (c) 2015-2018 Visyn
+﻿#region Copyright (c) 2015-2018 Visyn
 // The MIT License(MIT)
 // 
 // Copyright (c) 2015-2018 Visyn
@@ -23,28 +23,39 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Visyn.Exceptions;
-using Visyn.Serialize;
+using Visyn.Io;
 
-namespace Visyn.Windows.Io.FileHelper.Attributes
+namespace Visyn.Windows.Io.Log
 {
-    /// <summary>Indicates the length of a FixedLength field.</summary>
-    /// <remarks>See the <a href="http://www.filehelpers.net/mustread">complete attributes list</a> for more information and examples of each one.</remarks>
-
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class FieldFixedLengthAttribute : FieldAttribute
+  
+    public class DebugLogger : IOutputDeviceMultiline, IExceptionHandler
     {
-        /// <summary>Length of this Fixed Length field.</summary>
-        public int Length { get; private set; }
+        #region Implementation of IOutputDevice
 
-        /// <summary>Indicates the length of a Fixed Length field.</summary>
-        /// <param name="length">The length of the field.</param>
-        public FieldFixedLengthAttribute(int length)
+        public void Write(string text) =>  Debug.Write(text);
+
+        public void WriteLine(string line) => Debug.WriteLine(line);
+
+        public void Write(Func<string> func) => WriteLine(func());
+    
+        public void Write(IEnumerable<string> lines)
         {
-            if (length > 0)
-                this.Length = length;
-            else
-                throw new BadUsageException("The FieldFixedLength attribute must be > 0");
+            foreach(var line in lines) Debug.WriteLine(line);
         }
+
+        #endregion
+
+        #region Implementation of IExceptionHandler
+
+        public bool HandleException(object sender, Exception exception)
+        {
+            Debug.WriteLine($"{sender?.GetType().Name}: {exception.Message}");
+            return true;
+        }
+
+        #endregion
     }
 }

@@ -25,7 +25,6 @@
 using System;
 using System.IO;
 using Visyn.Serialize;
-using Visyn.Windows.Io.FileHelper.Core;
 
 namespace Visyn.Windows.Io.FileHelper
 {

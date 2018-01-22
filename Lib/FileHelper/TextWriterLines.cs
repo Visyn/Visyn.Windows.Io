@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Visyn.Collection;
 
 namespace Visyn.Windows.Io.FileHelper
 {
@@ -44,7 +43,11 @@ namespace Visyn.Windows.Io.FileHelper
 
         public TextWriterMerger(int count)
         {
-            Columns = new List<TextWriterLines>(Enumeration.CountTo(count, (i) => new TextWriterLines()));
+            Columns = new List<TextWriterLines>(count);//Enumeration.CountTo(count, (i) => new TextWriterLines()));
+            while (count-- > 0)
+            {
+                Columns.Add(new TextWriterLines());
+            }
         }
 
         public List<string> GetLines(string delimiter=null)

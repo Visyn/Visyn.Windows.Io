@@ -24,7 +24,6 @@
 
 using System;
 using Visyn.Exceptions;
-using Visyn.Windows.Io.Exceptions;
 using Visyn.Windows.Io.FileHelper.Enums;
 
 namespace Visyn.Windows.Io.FileHelper.Attributes

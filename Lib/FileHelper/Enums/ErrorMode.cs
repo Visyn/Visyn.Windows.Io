@@ -22,8 +22,6 @@
 // SOFTWARE.
 #endregion
 
-using Visyn.Windows.Io.Exceptions;
-
 namespace Visyn.Windows.Io.FileHelper.Enums
 {
     /// <summary>Indicates the behavior when the engine classes like <see cref="FileHelperEngine"/> class found an error.</summary>
