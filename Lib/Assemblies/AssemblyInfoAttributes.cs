@@ -79,11 +79,18 @@ namespace Visyn.Windows.Io.Assemblies
             return AssemblyInfoCache.Get(entry.Name());
         }
 
+        public static AssemblyInfoAttributes ExecutingAssembly()
+        {
+            var executing = Assembly.GetExecutingAssembly();
+            return AssemblyInfoCache.Get(executing.Name());
+        }
+
         public static AssemblyInfoAttributes Get(string name)
         {
             return AssemblyInfoCache.Get(name);
         }
 
+        [Obsolete("Use AssemblyInfoExtensions.AssemblyInfo(this Assembly assembly) extension method intead")]
         public static AssemblyInfoAttributes Get(Assembly assembly)
         {
             return AssemblyInfoCache.Get(assembly.Name());

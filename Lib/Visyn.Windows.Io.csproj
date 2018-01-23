@@ -14,6 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <AssemblyVersion>2.1.23.64</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Assemblies\AssemblyExtensions.cs" />
     <Compile Include="Assemblies\AssemblyInfoAttributes.cs" />
+    <Compile Include="Assemblies\AssemblyInfoExtensions.cs" />
     <Compile Include="Assemblies\Directories.cs" />
     <Compile Include="Device\ComPort.cs" />
     <Compile Include="Device\ComPortExtensions.cs" />
