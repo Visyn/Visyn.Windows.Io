@@ -33,7 +33,7 @@ namespace Visyn.Windows.Io.Assemblies
     {
         public static string ProgramDataDirectory => LazyProgramDataDirectory.Value;
 
-        public static readonly Lazy<string> LazyProgramDataDirectory = new Lazy<string>(new Func<string>(() =>
+        private static readonly Lazy<string> LazyProgramDataDirectory = new Lazy<string>(new Func<string>(() =>
         {
             // GetEntryAssembly() works properly for applications, but fails unit test. Use GetCallingAssembly for unit test.
             var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();

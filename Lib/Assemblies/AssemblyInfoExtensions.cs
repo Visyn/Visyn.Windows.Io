@@ -23,5 +23,8 @@ namespace Visyn.Windows.Io.Assemblies
 
         public static string Company(this Assembly assembly)
             => AssemblyInfoAttributes.AssemblyInfoCache.Get(assembly.Name()).Company;
+
+        public static string Copyright(this Assembly assembly)
+            => AssemblyInfoAttributes.AssemblyInfoCache.Get(assembly.Name()).Copyright;
     }
 }
