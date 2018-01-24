@@ -66,7 +66,7 @@ namespace Visyn.Windows.Io.Log
             {
                 lock (this)
                 {
-                    File.WriteAllLines(Filename, lines.Select(line => lineText(line, severity)));
+                    File.AppendAllLines(Filename, lines.Select(line => lineText(line, severity)));
                 }
             }
             catch (Exception e)
