@@ -28,6 +28,7 @@ using System.Linq;
 using System.Management;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Visyn.Collection;
 using Visyn.Io;
 using Visyn.JetBrains;
 using Visyn.Threads;
@@ -117,6 +118,22 @@ namespace Visyn.Windows.Io.Device
         }
 
         #endregion
+
+#if DEBUG
+        public static List<ManagementObject> QueryUsbDevices()
+        {
+            var allPnP = "SELECT * FROM Win32_PnPEntity";
+            var pnpMo = new ManagementObjectSearcher(new SelectQuery(allPnP));
+            var pnpDev = pnpMo.Get().ToList<ManagementObject>();
+
+            var usb = (from pnp in pnpDev
+                 let pnpDevId = pnp["DeviceId"] as string
+                 where pnpDevId?.Contains("USB") == true
+                 select pnp).ToList();
+
+            return usb;
+        }
+#endif
     }
 
 
