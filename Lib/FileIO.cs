@@ -11,7 +11,7 @@ using Visyn.Collection;
 using Visyn.Exceptions;
 using Visyn.Io;
 
-namespace Visyn.Util.IO
+namespace Visyn.Windows.Io
 {
     public class FileIO
     {
