@@ -32,14 +32,34 @@ using Visyn.Threads;
 
 namespace Visyn.Windows.Io.Threads
 {
+    /// <summary>
+    /// Class CircularBufferLogger.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <seealso cref="Visyn.Threads.ProcessQueuedDataTask{T}" />
     public abstract class CircularBufferLogger<T> : ProcessQueuedDataTask<T>
     {
+        /// <summary>
+        /// Gets the capacity of the log.
+        /// </summary>
+        /// <value>The capacity.</value>
         public int Capacity { get; }
+        /// <summary>
+        /// Gets the path to the log file.
+        /// </summary>
+        /// <value>The path.</value>
         public string Path { get; }
 
+        /// <summary>
+        /// The logging status backing field
+        /// </summary>
         [Obsolete("Backing Field, do not access")]
         private bool _logging;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="CircularBufferLogger{T}"/> is logging.
+        /// </summary>
+        /// <value><c>true</c> if logging; otherwise, <c>false</c>.</value>
         public bool Logging
         {
 #pragma warning disable 618
@@ -52,8 +72,20 @@ namespace Visyn.Windows.Io.Threads
 #pragma warning restore 618
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="CircularBufferLogger{T}"/> is appending.
+        /// </summary>
+        /// <value><c>true</c> if append; otherwise, <c>false</c>.</value>
         public bool Append { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CircularBufferLogger{T}"/> class.
+        /// </summary>
+        /// <param name="path">The path to the log file.</param>
+        /// <param name="capacity">The capacity of the log in lines.</param>
+        /// <param name="append">if set to <c>true</c> to [append] if log file already exists.</param>
+        /// <param name="handler">The exception handler.</param>
+        /// <exception cref="System.NullReferenceException">T</exception>
         protected CircularBufferLogger(string path, int capacity, bool append, IExceptionHandler handler)
             : base(handler)
         {
@@ -76,6 +108,9 @@ namespace Visyn.Windows.Io.Threads
         }
         #region Overrides of ProcessQueuedDataTask<OptimizationResults>
 
+        /// <summary>
+        /// Processes the data.
+        /// </summary>
         protected override void ProcessData()
         {
             if (Logging)
@@ -94,7 +129,15 @@ namespace Visyn.Windows.Io.Threads
 
         #endregion
 
+        /// <summary>
+        /// Logs the specified items.
+        /// </summary>
+        /// <param name="items">The items to log.</param>
         protected abstract void LogItems(IEnumerable<T> items);
+
+        /// <summary>
+        /// Checks log capacity and removes items if capacity exceeded.
+        /// </summary>
         protected virtual void OverCapacity()
         {
             List<T> items;
