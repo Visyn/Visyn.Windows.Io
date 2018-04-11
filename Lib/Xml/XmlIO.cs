@@ -35,10 +35,19 @@ namespace Visyn.Windows.Io.Xml
 {
     public class XmlIO
     {
+        public static void Serialize<T>([NotNull]T data, [NotNull]string filename, IExceptionHandler exceptionHandler)
+        {
+            XmlIO.Serialize<T>(data,filename,exceptionHandler.HandleException);
+        }
+
+        public static T Deserialize<T>([NotNull]string fileName, IExceptionHandler exceptionHandler)
+        {
+            return XmlIO.Deserialize<T>(fileName, exceptionHandler.HandleException);
+        }
 
         public static void Serialize<T>([NotNull]T data, [NotNull]string filename, ExceptionHandler exceptionHandler)
         {
-            Debug.Assert(filename != null, "filename != null");
+            Debug.Assert(filename != null, "filename == null");
             using (var writer = new StreamWriter(filename))
             {
                 XmlSerialize.Serialize(data, writer, exceptionHandler);
@@ -47,6 +56,7 @@ namespace Visyn.Windows.Io.Xml
 
         public static T Deserialize<T>([NotNull]string fileName, ExceptionHandler exceptionHandler)
         {
+            Debug.Assert(fileName != null, $"{nameof(XmlIO)}.{nameof(Deserialize)} filename == null");
             if (!File.Exists(fileName)) return default(T);
 
             using (var reader = new StreamReader(fileName))
