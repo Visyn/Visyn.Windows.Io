@@ -52,7 +52,7 @@ namespace Visyn.Windows.Io.Log
 
         public bool HandleException(object sender, Exception exception)
         {
-            Debug.WriteLine($"{sender?.GetType().Name}: {exception.Message}");
+            Debug.WriteLine($"{sender?.GetType().Name}: {exception?.Message}");
             return true;
         }
 

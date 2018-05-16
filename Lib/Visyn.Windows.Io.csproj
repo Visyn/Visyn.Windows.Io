@@ -15,7 +15,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <AssemblyVersion>2.1.37.126</AssemblyVersion>
-    <ApplicationVersion>2.1.101.162</ApplicationVersion>
+    <ApplicationVersion>2.1.136.223</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -142,7 +142,8 @@
     <Compile Include="FileIO.cs" />
     <Compile Include="Files\DirectoryExtensions.cs" />
     <Compile Include="Files\FileExtensions.cs" />
-    <Compile Include="ConsoleOutput.cs" />
+    <Compile Include="Io\ConsoleInput.cs" />
+    <Compile Include="Io\ConsoleOutput.cs" />
     <Compile Include="Files\FileFinder.cs" />
     <Compile Include="Log\FileLogger.cs" />
     <Compile Include="Log\DebugLogger.cs" />

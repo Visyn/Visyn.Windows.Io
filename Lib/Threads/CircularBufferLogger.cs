@@ -111,20 +111,22 @@ namespace Visyn.Windows.Io.Threads
         /// <summary>
         /// Processes the data.
         /// </summary>
-        protected override void ProcessData()
+        protected override int ProcessData()
         {
+            int count = 0;
             if (Logging)
             {
                 if (Count > 0)
                 {
-                    LogItems(DequeueMany());
+                    count = LogItems(DequeueMany());
                 }
             }
 
             if (Count > Capacity * 1.1)
             {
-                OverCapacity();
+                count += OverCapacity();
             }
+            return count;
         }
 
         #endregion
@@ -133,15 +135,15 @@ namespace Visyn.Windows.Io.Threads
         /// Logs the specified items.
         /// </summary>
         /// <param name="items">The items to log.</param>
-        protected abstract void LogItems(IEnumerable<T> items);
+        protected abstract int LogItems(IEnumerable<T> items);
 
         /// <summary>
         /// Checks log capacity and removes items if capacity exceeded.
         /// </summary>
-        protected virtual void OverCapacity()
+        protected virtual int OverCapacity()
         {
             List<T> items;
-            TryDequeueMany(Count - Capacity, out items);
+            return TryDequeueMany(Count - Capacity, out items);
         }
     }
 }
