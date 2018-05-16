@@ -113,7 +113,7 @@ namespace Visyn.Windows.Io.Threads
         /// </summary>
         protected override int ProcessData()
         {
-            var count = 0;
+            int count = 0;
             if (Logging)
             {
                 if (Count > 0)
@@ -126,7 +126,6 @@ namespace Visyn.Windows.Io.Threads
             {
                 count += OverCapacity();
             }
-
             return count;
         }
 
@@ -136,7 +135,7 @@ namespace Visyn.Windows.Io.Threads
         /// Logs the specified items.
         /// </summary>
         /// <param name="items">The items to log.</param>
-        protected abstract void LogItems(IEnumerable<T> items);
+        protected abstract int LogItems(IEnumerable<T> items);
 
         /// <summary>
         /// Checks log capacity and removes items if capacity exceeded.
