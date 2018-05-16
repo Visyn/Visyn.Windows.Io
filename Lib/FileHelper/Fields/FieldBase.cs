@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -195,13 +196,6 @@ namespace Visyn.Windows.Io.FileHelper.Fields
         /// </summary>
         public string FieldName => FieldInfo.Name;
 
-        /*
-        private static readonly char[] mWhitespaceChars = new[] {
-            '\t', '\n', '\v', '\f', '\r', ' ', '\x00a0', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005',
-            '\u2006', '\u2007', '\u2008',
-            '\u2009', '\u200a', '\u200b', '\u3000', '\ufeff'
-*/
-
         #endregion
 
         #region "  CreateField  "
@@ -306,7 +300,7 @@ namespace Visyn.Windows.Io.FileHelper.Fields
 
                 if (delimitedRecordAttribute != null)
                 {
-                    res = new DelimitedField(fi, delimitedRecordAttribute.Separator);
+                    res = new DelimitedField(fi, delimitedRecordAttribute.Delimiter);
                 }
             }
 
@@ -414,7 +408,7 @@ namespace Visyn.Windows.Io.FileHelper.Fields
         /// Verify the settings against the actual field to ensure it will work.
         /// </summary>
         /// <param name="fi">Field Info Object</param>
-        protected FieldBase(FieldInfo fi)  : this()
+        protected FieldBase(FieldInfo fi, string delimiter)  : this()
         {
             FieldInfo = fi;
             FieldType = FieldInfo.FieldType;
@@ -438,10 +432,19 @@ namespace Visyn.Windows.Io.FileHelper.Fields
 
             IsStringField = FieldTypeInternal == typeof (string);
 
-            var attribs = attibuteTarget.GetCustomAttributes(typeof (FieldConverterAttribute), true);
+            var attributes = attibuteTarget.GetCustomAttributes(typeof (FieldConverterAttribute), true);
 
-            if (attribs.Length > 0) {
-                var conv = (FieldConverterAttribute) attribs[0];
+            foreach (var attribute in attributes)
+            {
+                var fc = attribute as FieldConverterAttribute;
+                if (fc != null) fc.Delimiter = delimiter;
+#if DEBUG
+                var del = attribute as DelimitedRecordAttribute;
+                if (del != null) Debug.Assert(del.Delimiter == delimiter);
+#endif
+            }
+            if (attributes.Length > 0) {
+                var conv = (FieldConverterAttribute) attributes[0];
                 Converter = conv.Converter;
                 conv.ValidateTypes(FieldInfo);
             }
@@ -457,10 +460,10 @@ namespace Visyn.Windows.Io.FileHelper.Fields
                 //Converter.mDestinationType = FieldTypeInternal;
             }
 
-            attribs = attibuteTarget.GetCustomAttributes(typeof (FieldNullValueAttribute), true);
+            attributes = attibuteTarget.GetCustomAttributes(typeof (FieldNullValueAttribute), true);
 
-            if (attribs.Length > 0) {
-                NullValue = ((FieldNullValueAttribute) attribs[0]).NullValue;
+            if (attributes.Length > 0) {
+                NullValue = ((FieldNullValueAttribute) attributes[0]).NullValue;
                 //				mNullValueOnWrite = ((FieldNullValueAttribute) attribs[0]).NullValueOnWrite;
 
                 if (NullValue != null) {

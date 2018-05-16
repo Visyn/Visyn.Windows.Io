@@ -51,13 +51,13 @@ namespace Visyn.Windows.Io.FileHelper.Fields
         /// Create a delimited field with defined separator
         /// </summary>
         /// <param name="fi">field info structure</param>
-        /// <param name="sep">field separator</param>
-        internal DelimitedField(FieldInfo fi, string sep)
-            : base(fi)
+        /// <param name="delimiter">field separator</param>
+        internal DelimitedField(FieldInfo fi, string delimiter)
+            : base(fi, delimiter)
         {
             QuoteChar = '\0';
             QuoteMultiline = MultilineMode.AllowForBoth;
-            Separator = sep; // string.Intern(sep);
+            Separator = delimiter; // string.Intern(delimiter);
         }
 
         #endregion

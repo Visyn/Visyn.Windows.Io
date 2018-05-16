@@ -70,7 +70,7 @@ namespace Visyn.Windows.Io.FileHelper.Fields
         /// <param name="length">Length of this field</param>
         /// <param name="align">Alignment, left or right</param>
         internal FixedLengthField(FieldInfo fi, int length, FieldAlignAttribute align)
-            : base(fi)
+            : base(fi,null)
         {
             FixedMode = FixedMode.ExactLength;
             Align = new FieldAlignAttribute(AlignMode.Left, ' ');

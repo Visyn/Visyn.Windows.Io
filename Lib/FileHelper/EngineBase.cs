@@ -27,6 +27,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using Visyn.Exceptions;
+using Visyn.Types;
 using Visyn.Windows.Io.Exceptions;
 using Visyn.Windows.Io.FileHelper.Enums;
 using Visyn.Windows.Io.FileHelper.Core;
@@ -73,12 +74,11 @@ namespace Visyn.Windows.Io.FileHelper
                     .RecordType(recordType.Name)
                     .Text);
             }
-
             RecordType = recordType;
-            RecordInfo = VisynRecordInfo.Resolve(recordType); // Container.Resolve<IRecordInfo>(recordType);
             Encoding = encoding;
-
-            CreateRecordOptions();
+            // What is delimiter???
+            RecordInfo = VisynRecordInfo.Resolve(recordType);
+            Options = CreateRecordOptionsCore(RecordInfo);
         }
 
         /// <summary>
@@ -89,8 +89,7 @@ namespace Visyn.Windows.Io.FileHelper
         {
             RecordType = ri.RecordType;
             RecordInfo = ri;
-
-            CreateRecordOptions();
+            Options = CreateRecordOptionsCore(ri);
         }
 
         #endregion
@@ -130,7 +129,17 @@ namespace Visyn.Windows.Io.FileHelper
                     res.Append(delimiter);
 
                 var field = RecordInfo.Fields[i];
-                res.Append(field.FieldCaption ?? field.FieldFriendlyName);
+
+                var value = field.Converter as IFieldConverterHeader;
+                if (value != null)
+                {
+                    Debug.Assert(value.Delimiter.Equals(delimiter));
+                    res.Append(value.GetHeaderText(delimiter));
+                }
+                else
+                {
+                    res.Append(field.FieldCaption ?? field.FieldFriendlyName);
+                }
             }
 
             return res.ToString();
@@ -153,9 +162,7 @@ namespace Visyn.Windows.Io.FileHelper
         /// Default is the system's current ANSI code page.
         /// </summary>
         /// <value>Default is the system's current ANSI code page.</value>
-        public Encoding Encoding
-        { get;
-            set; }
+        public Encoding Encoding { get; set; }
 
 
         #region "  NewLineForWrite  "
@@ -245,7 +252,7 @@ namespace Visyn.Windows.Io.FileHelper
             Progress?.Invoke(this, e);
         }
 
-
+        [Obsolete("Use CreateRecordOptionsCore(IRecordInfo)",true)]
         private void CreateRecordOptions()
         {
             Options = CreateRecordOptionsCore(RecordInfo);

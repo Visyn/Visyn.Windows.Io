@@ -131,12 +131,12 @@ namespace Visyn.Windows.Io.FileHelper.Core
         /// Is this record layout delimited
         /// </summary>
         public bool IsDelimited => Fields[0] is DelimitedField;
-
+        
         #endregion
 
         #region "  Constructor "
 
-        internal VisynRecordInfo() {}
+        private VisynRecordInfo() {}
 
         /// <summary>
         /// Read the attributes of the class and create an array
@@ -144,15 +144,15 @@ namespace Visyn.Windows.Io.FileHelper.Core
         /// </summary>
         /// <param name="recordType">Class we are analysing</param>
         /// <param name="typedRecordAttribute"></param>
-        internal VisynRecordInfo(Type recordType, ITypedRecordAttribute typedRecordAttribute = null)
+        internal VisynRecordInfo(Type recordType, ITypedRecordAttribute typedRecordAttribute)
         {
+            RecordType = recordType;
             SizeHint = 32;
             RecordConditionSelector = string.Empty;
             RecordCondition = RecordCondition.None;
             CommentAnyPlace = true;
-            RecordType = recordType;
-            InitRecordFields(typedRecordAttribute);
             Operations = new RecordOperations(this);
+            InitRecordFields(typedRecordAttribute);
         }
 
         /// <summary>
@@ -484,7 +484,7 @@ namespace Visyn.Windows.Io.FileHelper.Core
                 RecordConditionRegEx = RecordConditionRegEx,
                 RecordConditionSelector = RecordConditionSelector,
                 RecordType = RecordType,
-                SizeHint = SizeHint
+                SizeHint = SizeHint,
             };
 
             res.Operations = Operations.Clone(res);

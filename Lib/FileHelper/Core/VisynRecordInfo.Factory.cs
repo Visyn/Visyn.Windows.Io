@@ -25,8 +25,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Visyn.Mathematics;
 using Visyn.Serialize;
+using Visyn.Windows.Io.FileHelper.Options;
 
 namespace Visyn.Windows.Io.FileHelper.Core
 {
@@ -79,7 +81,7 @@ namespace Visyn.Windows.Io.FileHelper.Core
                 // class check cache / lock / check cache  and create if null algorythm
                 res = KnownTypes.ContainsKey(type) ?
                     new VisynRecordInfo(type, KnownTypes[type]) :
-                    new VisynRecordInfo(type);
+                    new VisynRecordInfo(type,null);
                 lock (_recordInfoCache)
                 {
                     if (!_recordInfoCache.ContainsKey(type))
