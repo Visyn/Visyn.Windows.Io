@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,9 +7,85 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using Visyn.Collection;
+using Visyn.Exceptions;
+using Visyn.Threads;
 
 namespace Visyn.Windows.Io
 {
+    public class ConsoleEventHandler : ProcessQueuedDataTask<ConsoleKeyInfo>
+//: IDisposable
+    {
+        public override string Name { get; } = "ConsoleInput";
+
+        private StringBuilder builder;
+        public ConsoleEventHandler(IExceptionHandler handler, int bufferSize = 1000) : base(startAction,null,handler)
+        {
+            builder = new StringBuilder(bufferSize);
+        }
+
+        private static readonly Action<ConcurrentQueue<ConsoleKeyInfo>> startAction = new Action<ConcurrentQueue<ConsoleKeyInfo>>((q) =>
+        {
+            //var task = new Task(() =>
+            //{
+            //    while (true)
+            //    {
+            //        var key = Console.ReadKey();
+            //        q.Enqueue(key);
+            //    }
+            //});
+            //task.Start();
+        });
+
+        public override void Execute()
+        {
+            using (var task = new Task(() =>
+                {
+                    while (true)
+                    {
+                        var key = Console.ReadKey();
+                        Add(key);
+                    }
+                }))
+            {
+                task.Start();
+
+                base.Execute();
+            }
+        }
+
+
+        public EventHandler<ConsoleKeyInfo> KeyPress;
+        public EventHandler<string> LineReceived;
+
+        public string LineTerminator { get; set; } = Environment.NewLine;
+        protected override int ProcessData()
+        {
+            int count = 0;
+            while (Count > 0)
+            {
+                var key = Dequeue();
+
+                count++;
+                KeyPress?.BeginInvoke(this, key,null,null);
+
+                if (LineReceived != null)
+                {
+                    builder.Append(key.KeyChar);
+                    var line = builder.ToString();
+                    if (line.EndsWith("\r"))
+                    {
+                        LineReceived.BeginInvoke(this, line,null,null);
+                        builder.Clear();
+                    }
+                }
+
+                return count;
+            }
+            return 0;
+        }
+    }
+
     public class ConsoleInput :  IDisposable
     {
         public CancellationToken Token { get; }
@@ -27,10 +104,21 @@ namespace Visyn.Windows.Io
             var buffer = new byte[BufferSize];
             var builder = new StringBuilder(BufferSize);
             int offset = 0;
+            if(Token != null) Token.ThrowIfCancellationRequested();
             while (true)
             {
-              
-                var result = await InputStream.ReadAsync(buffer, offset, 1, Token);
+                int result = 0;
+                try
+                {
+                    result = await InputStream.ReadAsync(buffer, offset, 1, Token);
+
+                }
+                catch (Exception e)
+                {
+                    return builder.ToString();
+                }
+
+
 
                 if (result > 0)
                 {

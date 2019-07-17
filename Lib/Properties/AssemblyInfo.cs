@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("Visyn")]
 [assembly: AssemblyProduct("Visyn.Windows.Io")]
-[assembly: AssemblyCopyright("Copyright © 2015-2018")]
+[assembly: AssemblyCopyright("Copyright © 2015-2019")]
 [assembly: AssemblyTrademark("Visyn")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
@@ -60,5 +60,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("2.1.136.224")]
-[assembly: AssemblyFileVersion("2.1.136.224")]
+[assembly: AssemblyVersion("2.1.28.229")]
+[assembly: AssemblyFileVersion("2.1.28.229")]

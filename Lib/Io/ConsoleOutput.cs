@@ -25,11 +25,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Visyn.Exceptions;
 using Visyn.Io;
 
 namespace Visyn.Windows.Io
 {
-    public class ConsoleOutput : TraceListener, IOutputDeviceMultiline
+    public class ConsoleOutput : TraceListener, IOutputDeviceMultiline, IExceptionHandler
     {
         public override void WriteLine(string line) => Console.WriteLine(line);
         public override void Write(string text) => Console.Write(text);
@@ -53,5 +54,11 @@ namespace Visyn.Windows.Io
         }
 
         #endregion
+
+        public bool HandleException(object sender, Exception exception)
+        {
+            WriteLine($"{exception?.GetType().Name} {exception?.Message}");
+            return true;
+        }
     }
 }
